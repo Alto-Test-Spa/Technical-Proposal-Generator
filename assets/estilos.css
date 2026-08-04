@@ -1,0 +1,383 @@
+/* ═══════════════════════════════════════════════════════════════════
+   PROPUESTA TÉCNICA DE SERVICIO — ALTO TEST
+   Sistema visual compartido con los demás recursos de la marca:
+   paleta, IBM Plex, grillas finas y la catenaria como firma gráfica.
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root{
+  --paper:#F4F5F2; --ink:#10151E; --steel:#4C6B7A; --lsteel:#8FA3AD;
+  --signal:#C2491F; --ink2:#2A313B; --stage:#DDDED9; --mist:#B9C4CB;
+  --line:rgba(16,21,30,0.14); --line2:rgba(16,21,30,0.22);
+  --page-w:8.5in; --page-h:11in;
+}
+*{box-sizing:border-box;}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+body{margin:0;font-family:'IBM Plex Sans',sans-serif;color:var(--ink);background:var(--stage);
+     -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+.ttt{letter-spacing:-0.06em;}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.18em;
+         text-transform:uppercase;color:var(--steel);}
+.grid-fine-l{background-image:linear-gradient(to right,rgba(244,245,242,0.05) 1px,transparent 1px),
+             linear-gradient(to bottom,rgba(244,245,242,0.05) 1px,transparent 1px);background-size:32px 32px;}
+
+/* ══════════════ Barra de herramientas ══════════════ */
+.toolbar{position:sticky;top:0;z-index:60;display:flex;flex-wrap:wrap;align-items:center;gap:11px;
+         background:var(--ink);color:var(--paper);padding:10px 20px;}
+.toolbar .brand{font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:-0.03em;font-size:14px;}
+.toolbar .spacer{flex:1;}
+.toolbar .div{width:1px;height:22px;background:rgba(244,245,242,0.2);}
+.tb-group{display:flex;align-items:center;gap:7px;}
+.tb-group .eyebrow{color:var(--lsteel);font-size:9px;}
+.tb-input{font-family:'IBM Plex Mono',monospace;font-size:12px;background:rgba(255,255,255,0.08);
+          border:1px solid rgba(244,245,242,0.3);color:var(--paper);padding:6px 9px;outline:none;}
+.tb-input:focus{border-color:var(--signal);}
+.tb-input.w-code{width:186px;} .tb-input.w-date{width:104px;} .tb-input.w-num{width:52px;text-align:right;}
+.tb-btn{display:inline-flex;align-items:center;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:11px;
+        letter-spacing:0.08em;text-transform:uppercase;background:var(--paper);color:var(--ink);border:0;
+        padding:7px 13px;cursor:pointer;}
+.tb-btn:hover{background:var(--signal);color:#fff;}
+.tb-btn.ghost{background:transparent;color:var(--lsteel);border:1px solid rgba(244,245,242,0.3);}
+.tb-btn.ghost:hover{color:#fff;border-color:var(--signal);background:transparent;}
+.tb-btn.ghost.on{color:var(--paper);border-color:var(--signal);background:rgba(194,73,31,0.25);}
+.tb-btn.mini{padding:5px 7px;}
+.tb-btn .ic{width:14px;height:14px;stroke-width:2;}
+#estado{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--lsteel);min-width:126px;}
+input[type=range]{width:74px;accent-color:var(--signal);}
+
+/* Ayuda desplegable de la barra */
+.ayuda{background:#171D28;color:var(--mist);padding:14px 22px 16px;font-size:12px;line-height:1.6;}
+.ayuda h5{margin:0 0 8px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.16em;
+          text-transform:uppercase;color:var(--signal);font-weight:500;}
+.ayuda ul{margin:0;padding-left:18px;} .ayuda li{margin-bottom:4px;}
+.ayuda b{color:var(--paper);}
+.ayuda .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+/* Panel de capítulos */
+.ayuda .secs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 20px;}
+.secitem{display:flex;align-items:center;gap:9px;font-size:12px;cursor:pointer;padding:3px 0;}
+.secitem input{accent-color:var(--signal);cursor:pointer;}
+.secitem .sn{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--signal);min-width:20px;}
+.secitem.off{color:var(--steel);}
+.secitem.off .sn{color:var(--steel);}
+
+/* ══════════════ Hoja y paginación ══════════════ */
+.sheet{width:100%;max-width:var(--page-w);margin:0 auto;background:var(--paper);position:relative;}
+.page{width:100%;min-height:var(--page-h);position:relative;padding:0.72in 0.78in 0.95in;}
+.page.dark{background:var(--ink);color:var(--paper);overflow:hidden;}
+.page.cover{display:flex;flex-direction:column;padding-bottom:0.85in;}
+.rule-l{border-top:1px solid rgba(244,245,242,0.15);}
+.foot{position:absolute;left:0.78in;right:0.78in;bottom:0.42in;display:flex;justify-content:space-between;
+      font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--steel);}
+.page.dark .foot{color:var(--lsteel);}
+/* Capítulo dejado fuera: no se muestra ni se imprime; su contenido se conserva */
+.page.fuera{display:none !important;}
+.foot .foot-cod{font-weight:400;color:var(--lsteel);}
+@media screen{
+  .page{margin-bottom:24px;box-shadow:0 0 0 1px rgba(16,21,30,0.06),0 20px 44px -24px rgba(16,21,30,0.4);}
+  /* Guía de corte: marca dónde termina la primera hoja carta al imprimir */
+  .page.flow::after{content:"";position:absolute;left:0;right:0;top:var(--page-h);height:0;
+                    border-top:1px dashed rgba(194,73,31,0.35);pointer-events:none;}
+}
+
+/* ══════════════ Portada ══════════════
+   Tres capas apiladas: la fotografía al fondo, la grilla encima y el
+   contenido arriba de todo. Cada capa se declara por su clase — nada de
+   selectores universales, que pisarían el posicionamiento de la foto. */
+.cover-photo{position:absolute;inset:0;z-index:0;overflow:hidden;}
+.cover-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
+.cover-photo .veil{position:absolute;inset:0;z-index:1;}
+.cover-photo.empty{display:none;}
+.cover-grid{position:absolute;inset:0;z-index:1;opacity:.6;pointer-events:none;}
+/* Con fotografía la grilla sobra: sobre una imagen se lee como un enrejado
+   impreso por error, no como la textura técnica de la marca. */
+.cover.con-foto .cover-grid{display:none;}
+.cover-layer{position:relative;z-index:2;}
+.doctype{font-size:39px;line-height:1;font-weight:600;letter-spacing:-0.06em;margin:0 0 12px;}
+.projname{font-size:19px;line-height:1.3;font-weight:400;color:var(--mist);margin:0 0 16px;max-width:88%;}
+/* Sombra de texto sólo cuando hay foto: garantiza lectura sobre cualquier
+   imagen, sin ensuciar la portada sobria cuando no la hay. */
+.cover.con-foto .doctype,.cover.con-foto .projname,.cover.con-foto .eyebrow{
+  text-shadow:0 1px 16px rgba(16,21,30,0.75);}
+
+/* Ficha de datos. El marco y las divisiones son el propio fondo asomando
+   por el gap; sin `border`, que se desalineaba un píxel al imprimir. */
+.datagrid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;padding:1px;
+          background:rgba(244,245,242,0.2);}
+.datagrid .dcell{background:var(--ink);padding:10px 13px;}
+.cover.con-foto .datagrid{background:rgba(244,245,242,0.28);}
+.cover.con-foto .datagrid .dcell{background:rgba(16,21,30,0.94);}
+.datagrid .dcell .eyebrow{color:var(--signal);font-size:9px;margin:0;}
+.datagrid .dcell .val{font-size:13px;line-height:1.4;margin-top:4px;color:var(--paper);min-height:18px;}
+
+/* Franja de diferenciadores. Deliberadamente más liviana que la ficha de
+   datos: informa sin competir con el título ni con los datos del cliente. */
+.pilares{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:22px;
+         padding-top:16px;border-top:1px solid rgba(244,245,242,0.18);}
+.pilares .pilar .ic{width:17px;height:17px;stroke-width:1.7;color:var(--signal);margin-bottom:7px;}
+.pilares .pilar .pt{font-size:12.5px;font-weight:600;letter-spacing:-0.01em;color:var(--paper);
+                    margin-bottom:3px;}
+.pilares .pilar .pd{font-size:10.5px;line-height:1.45;color:var(--lsteel);}
+.cover.con-foto .pilares .pt,.cover.con-foto .pilares .pd{text-shadow:0 1px 14px rgba(16,21,30,0.8);}
+
+/* ══════════════ Tipografía de sección ══════════════ */
+.sec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:19px;}
+.sec-head .lbl{display:flex;align-items:center;gap:9px;font-family:'IBM Plex Mono',monospace;font-size:12px;
+               letter-spacing:0.2em;text-transform:uppercase;color:var(--signal);}
+.sec-head .lbl .ic{width:16px;height:16px;stroke-width:2;flex:0 0 auto;}
+.sec-head .idx{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--steel);}
+.page.dark .sec-head .idx{color:var(--lsteel);}
+h3.big{font-size:28px;line-height:1.1;font-weight:600;letter-spacing:-0.055em;margin:0 0 8px;max-width:94%;}
+p.dek{font-size:12.5px;line-height:1.45;color:var(--steel);margin:0 0 16px;max-width:82%;}
+h4.sub{display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;
+       letter-spacing:0.14em;text-transform:uppercase;color:var(--signal);margin:17px 0 8px;font-weight:500;}
+h4.sub .ic{width:14px;height:14px;stroke-width:2;flex:0 0 auto;}
+h4.sub .nsub{white-space:pre;}
+/* Quién responde por cada bloque: se lee antes que la lista misma */
+h4.sub .quien{margin-left:auto;font-size:8.5px;letter-spacing:0.12em;padding:2px 8px;
+              border:1px solid var(--signal);color:var(--signal);text-transform:uppercase;}
+h4.sub .quien.cliente{border-color:var(--steel);color:var(--steel);}
+h4.sub .quien.fuera{border-color:var(--line2);color:var(--lsteel);}
+.lead{font-size:13px;line-height:1.55;color:var(--ink2);margin:0 0 11px;max-width:94%;}
+.lead b,.lead strong{font-weight:600;color:var(--ink);}
+.fine{font-size:10.5px;line-height:1.5;color:var(--steel);margin:6px 0 0;}
+.fine b{color:var(--ink2);}
+
+/* ══════════════ Campos editables ══════════════ */
+.ed{outline:none;border-radius:1px;transition:background .12s ease;}
+.ed:hover{background:rgba(194,73,31,0.06);}
+.ed:focus{background:rgba(194,73,31,0.1);box-shadow:inset 2px 0 0 var(--signal);}
+.ed:empty:before{content:attr(data-ph);color:var(--lsteel);font-weight:400;}
+.page.dark .ed:hover{background:rgba(244,245,242,0.07);}
+.page.dark .ed:focus{background:rgba(244,245,242,0.1);box-shadow:inset 2px 0 0 var(--signal);}
+.page.dark .ed:empty:before{color:var(--steel);}
+/* Guías: subrayado sutil en todo lo que se puede escribir (sólo en pantalla) */
+body.guias .ed{border-bottom:1px dashed rgba(76,107,122,0.42);}
+body.guias .page.dark .ed{border-bottom-color:rgba(143,163,173,0.45);}
+body.guias td.ed{border-bottom:1px dashed rgba(76,107,122,0.42);}
+
+/* Dato calculado: no se escribe, se deduce del contenido */
+.auto{position:relative;}
+.auto-tag{display:inline-flex;align-items:center;gap:4px;font-family:'IBM Plex Mono',monospace;
+          font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--lsteel);}
+.auto-tag .ic{width:10px;height:10px;stroke-width:2.4;}
+
+/* ══════════════ Índice ══════════════ */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
+      border:1px solid var(--line);margin-bottom:8px;}
+.kpis .kpi{background:var(--paper);padding:12px 13px;}
+.kpis .kpi .kt{display:flex;align-items:center;gap:6px;margin-bottom:7px;}
+.kpis .kpi .kt .ic{width:14px;height:14px;stroke-width:2;color:var(--steel);}
+.kpis .kpi .kv{font-family:'IBM Plex Mono',monospace;font-size:21px;font-weight:600;
+               letter-spacing:-0.03em;color:var(--signal);line-height:1;}
+.kpis .kpi .kl{font-size:10px;line-height:1.35;color:var(--steel);margin-top:6px;}
+ol.toc{list-style:none;margin:0;padding:0;}
+ol.toc li{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);}
+ol.toc li:first-child{border-top:1px solid var(--line);}
+ol.toc .tn{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--signal);flex:0 0 26px;padding-top:2px;}
+ol.toc .ti{flex:0 0 18px;padding-top:1px;color:var(--steel);}
+ol.toc .ti .ic{width:16px;height:16px;stroke-width:1.8;}
+ol.toc .tw{flex:1;min-width:0;}
+ol.toc .tt{font-size:14.5px;font-weight:600;letter-spacing:-0.02em;}
+ol.toc .td{font-size:11.5px;line-height:1.45;color:var(--steel);margin-top:2px;}
+/* Navegación: el índice lleva a cada capítulo, y cada capítulo vuelve
+   al índice. Los enlaces se conservan en el PDF que genera el navegador. */
+ol.toc .tsalto{display:flex;align-items:flex-start;gap:12px;flex:0 0 auto;}
+.tlink{color:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:7px;
+       transition:color .12s ease;}
+.tlink:hover{color:var(--signal);}
+ol.toc li:hover .tn,ol.toc li:hover .ti{color:var(--signal);}
+ol.toc .chev{width:13px;height:13px;stroke-width:2;opacity:0;transform:translateX(-4px);
+             transition:opacity .14s ease,transform .14s ease;}
+ol.toc li:hover .chev{opacity:1;transform:translateX(0);}
+a.volver{text-decoration:none;transition:color .12s ease;}
+a.volver:hover{color:var(--signal);}
+/* Al saltar, el título no queda debajo de la barra fija */
+.page{scroll-margin-top:74px;}
+html{scroll-behavior:smooth;}
+
+/* ══════════════ Tablas ══════════════ */
+table.tbl{width:100%;border-collapse:collapse;table-layout:fixed;}
+table.tbl thead th{background:var(--ink);color:var(--paper);font-family:'IBM Plex Mono',monospace;
+                   font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;
+                   padding:8px 10px;text-align:left;}
+table.tbl thead th.c{text-align:center;}
+table.tbl thead th.act{width:24px;padding:0;background:transparent;}
+table.tbl tbody td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);
+                   padding:6px 9px;font-size:11.5px;line-height:1.4;vertical-align:top;
+                   word-wrap:break-word;overflow-wrap:anywhere;}
+table.tbl tbody tr:nth-child(even) td{background:rgba(16,21,30,0.025);}
+table.tbl td.c{text-align:center;}
+table.tbl td.n{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--steel);}
+table.tbl td.k{font-weight:600;}
+table.tbl td.act{width:24px;padding:5px 0 0 6px;border-right:0;border-bottom:0;background:transparent !important;}
+/* Matriz de criticidad */
+table.tbl td.crit-alta{color:var(--signal);font-weight:600;}
+table.tbl td.crit-media{color:var(--ink2);font-weight:500;}
+table.tbl td.crit-baja{color:var(--steel);}
+
+/* ══════════════ Listas ══════════════ */
+ul.blist{list-style:none;margin:0;padding:0;}
+ul.blist li{display:flex;gap:9px;align-items:flex-start;padding:4px 0;border-bottom:1px solid var(--line);
+            font-size:11.5px;line-height:1.48;color:var(--ink2);}
+ul.blist li .bul{flex:0 0 auto;color:var(--signal);display:flex;align-items:center;padding-top:2px;}
+ul.blist li .bul .ic{width:13px;height:13px;stroke-width:2.2;}
+ul.blist li .txt{flex:1;min-width:0;}
+ul.blist li .txt b,ul.blist li .txt strong{font-weight:600;color:var(--ink);}
+/* Lo que aporta el cliente se agrupa en un panel: distinto de lo que
+   hacemos nosotros, sin que parezca una exigencia. */
+ul.blist.pide{background:rgba(16,21,30,0.03);border-left:3px solid var(--steel);
+              padding:2px 14px;}
+ul.blist.pide li{border-bottom-color:rgba(16,21,30,0.08);}
+ul.blist.pide li:last-child{border-bottom:0;}
+ul.blist.pide li .bul{color:var(--steel);}
+ul.blist.neg li{color:var(--steel);}
+ul.blist.neg li .bul{color:var(--lsteel);}
+
+/* ══════════════ Botones de fila ══════════════ */
+.delrow{width:18px;height:18px;border:1px solid var(--line);background:transparent;color:var(--steel);
+        cursor:pointer;font-size:11px;line-height:1;border-radius:2px;padding:0;flex:0 0 auto;}
+.delrow:hover{border-color:var(--signal);color:var(--signal);}
+.addrow{margin-top:8px;display:flex;align-items:center;justify-content:center;gap:7px;
+        font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;
+        background:transparent;border:1px dashed var(--line2);color:var(--steel);padding:6px 14px;
+        cursor:pointer;width:100%;}
+.addrow:hover{border-color:var(--signal);color:var(--signal);}
+.addrow .ic{width:13px;height:13px;stroke-width:2;}
+
+/* ══════════════ Módulos ══════════════ */
+.justif{border-left:3px solid var(--signal);background:rgba(16,21,30,0.03);padding:9px 13px;margin-bottom:7px;
+        display:flex;gap:11px;align-items:flex-start;}
+.justif .jic{flex:0 0 auto;color:var(--signal);padding-top:2px;}
+.justif .jic .ic{width:16px;height:16px;stroke-width:1.8;}
+.justif .body{flex:1;min-width:0;}
+.justif .jt{font-weight:600;font-size:12.5px;letter-spacing:-0.01em;margin-bottom:2px;}
+.justif .jp{font-size:11px;line-height:1.5;color:var(--steel);}
+.justif .jp b{color:var(--ink2);}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.chip{display:inline-flex;align-items:center;gap:7px;background:var(--ink);color:var(--paper);
+      font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.06em;padding:4px 10px;}
+.chip .x{cursor:pointer;color:var(--lsteel);}
+.chip .x:hover{color:var(--signal);}
+.chip.add{background:transparent;color:var(--steel);border:1px dashed var(--line2);cursor:pointer;}
+.chip.add:hover{border-color:var(--signal);color:var(--signal);}
+
+.method{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);border:1px solid var(--line);}
+.method .st{background:var(--paper);padding:12px 11px;}
+.method .st .sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.method .st .n{font-family:'IBM Plex Mono',monospace;color:var(--signal);font-size:13px;}
+.method .st .ic{width:15px;height:15px;stroke-width:1.8;color:var(--steel);}
+.method .st .t{font-weight:600;font-size:12px;margin-bottom:3px;}
+.method .st .d{font-size:10px;line-height:1.4;color:var(--steel);}
+.ciclo{display:flex;align-items:center;gap:9px;margin-top:8px;font-size:10.5px;color:var(--steel);}
+.ciclo .ic{width:13px;height:13px;stroke-width:2;color:var(--signal);}
+
+.gantt{border:1px solid var(--line);}
+.gantt .grow{display:grid;align-items:stretch;border-bottom:1px solid var(--line);
+             grid-template-columns:200px repeat(var(--n,6),1fr) 26px;}
+.gantt .grow:last-child{border-bottom:0;}
+.gantt .ghead{background:var(--ink);color:var(--paper);}
+.gantt .glabel{padding:7px 10px;font-size:10.5px;line-height:1.35;font-weight:600;
+               border-right:1px solid var(--line);display:flex;align-items:center;}
+.gantt .ghead .glabel{color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:9.5px;
+                      letter-spacing:0.1em;text-transform:uppercase;font-weight:500;
+                      border-right-color:rgba(244,245,242,0.2);}
+.gantt .gcell{border-right:1px solid var(--line);display:flex;align-items:center;padding:5px 4px;
+              min-height:30px;cursor:pointer;}
+.gantt .ghead .gcell{justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:9px;
+                     letter-spacing:0.08em;color:var(--paper);border-right-color:rgba(244,245,242,0.2);
+                     cursor:default;padding:8px 2px;min-height:0;}
+.gantt .grow:nth-child(even) .glabel,.gantt .grow:nth-child(even) .gcell{background:rgba(16,21,30,0.025);}
+.gantt .gcell:hover{background:rgba(194,73,31,0.07);}
+.gantt .ghead .gcell:hover{background:transparent;}
+.gantt .bar{height:13px;width:100%;background:var(--steel);}
+.gantt .bar.ini{margin-left:4px;border-radius:2px 0 0 2px;}
+.gantt .bar.fin{margin-right:4px;border-radius:0 2px 2px 0;}
+.gantt .bar.ini.fin{border-radius:2px;}
+.gantt .bar.hito{background:var(--signal);}
+.gantt .gact{display:flex;align-items:center;justify-content:center;cursor:default;border-right:0;}
+.gantt-legend{display:flex;gap:18px;margin-top:8px;align-items:center;flex-wrap:wrap;}
+.gantt-legend .lg{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--steel);}
+.gantt-legend .sw{width:22px;height:8px;}
+.hint{display:flex;align-items:center;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;
+      color:var(--steel);margin:7px 0 0;}
+.hint .ic{width:12px;height:12px;stroke-width:2;color:var(--signal);}
+
+/* Bloque oscuro de énfasis. Ojo: aquí las negritas van en papel, no en tinta. */
+.darkbox{background:var(--ink);color:var(--paper);padding:14px 17px;}
+.darkbox .eyebrow{color:var(--signal);margin:0 0 7px;}
+.darkbox .lead{color:var(--mist);margin:0;max-width:100%;}
+.darkbox .lead b,.darkbox .lead strong{color:var(--paper);font-weight:600;}
+.darkbox .ic{width:15px;height:15px;stroke-width:2;}
+
+/* Bloque de acompañamiento / mejora continua */
+.socio{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+       border:1px solid var(--line);margin-top:10px;}
+.socio .sc{background:var(--paper);padding:12px 13px;}
+.socio .sc .ic{width:16px;height:16px;stroke-width:1.8;color:var(--signal);margin-bottom:7px;}
+.socio .sc .t{font-weight:600;font-size:12px;margin-bottom:3px;}
+.socio .sc .d{font-size:10.5px;line-height:1.45;color:var(--steel);}
+
+.signrow{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:18px;}
+.signbox{border-top:1px solid var(--line2);padding-top:9px;}
+.signbox .who{font-size:12.5px;font-weight:600;}
+.signbox .role{font-size:10.5px;color:var(--steel);margin-top:2px;}
+/* Espacio físico para firmar: sin él, el documento no se puede devolver firmado */
+.signbox .rubrica{margin-top:42px;border-top:1px solid var(--line2);padding-top:5px;
+                  font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--steel);
+                  letter-spacing:0.06em;text-transform:uppercase;}
+
+/* ══════════════════════════════════════════════════════════════════
+   Acabado: relieve y bordes finos
+   Profundidad discreta sobre el papel, sin salirse del lenguaje
+   editorial de la marca: esquinas casi rectas (2 px) y sombras muy
+   bajas. Nada de esto se imprime.
+   ══════════════════════════════════════════════════════════════════ */
+@media screen{
+  .page{border-radius:2px;}
+  table.tbl{border-radius:2px;overflow:hidden;
+            box-shadow:0 1px 2px rgba(16,21,30,0.05),0 6px 16px -12px rgba(16,21,30,0.35);}
+  .gantt,.method,.kpis,.socio,.datagrid{border-radius:2px;
+            box-shadow:0 1px 2px rgba(16,21,30,0.05),0 6px 16px -12px rgba(16,21,30,0.35);}
+  .darkbox,.chip{border-radius:2px;box-shadow:0 6px 18px -14px rgba(16,21,30,0.7);}
+  .justif{border-radius:0 2px 2px 0;}
+  .tb-btn,.tb-input,.addrow{border-radius:2px;}
+  .toolbar{box-shadow:0 6px 18px -14px rgba(16,21,30,0.9);}
+  .cover-photo img{filter:saturate(0.92) contrast(1.04);}
+
+  /* Encabezados oscuros con un degradado apenas perceptible */
+  table.tbl thead th,.gantt .ghead{
+    background:linear-gradient(180deg,#182131 0%,var(--ink) 100%);}
+  .darkbox{background:linear-gradient(160deg,#182131 0%,var(--ink) 62%);}
+
+  /* Reacciones al puntero */
+  table.tbl tbody tr:hover td{background:rgba(194,73,31,0.04);}
+  ul.blist li:hover{background:rgba(194,73,31,0.03);}
+  .justif:hover{background:rgba(16,21,30,0.045);}
+  .kpis .kpi,.socio .sc,.method .st{transition:background .15s ease;}
+  .method .st:hover,.socio .sc:hover{background:#FAFAF8;}
+}
+
+/* ══════════════ Impresión ══════════════ */
+@page{size:Letter;margin:0;}
+@media print{
+  html,body{background:#fff;}
+  .no-print{display:none !important;}
+  .sheet{max-width:var(--page-w) !important;}
+  .page{page-break-after:always;break-after:page;margin:0;box-shadow:none;}
+  .page:last-child{page-break-after:auto;break-after:auto;}
+  .page.cover{height:var(--page-h);}
+  .ed:empty:before{content:"";}
+  .ed:hover,.ed:focus{background:transparent;box-shadow:none;}
+  body.guias .ed,body.guias td.ed{border-bottom:0;}
+  /* Los enlaces se imprimen como texto normal: el PDF conserva el salto,
+     pero el documento no debe verse como una página web. */
+  ol.toc .chev{display:none;}
+  .gantt .grow{grid-template-columns:200px repeat(var(--n,6),1fr);}
+  .tlink,a.volver{color:inherit;}
+  .justif,.method .st,.gantt .grow,ul.blist li,.darkbox,.signbox,ol.toc li,.kpis,.socio .sc{break-inside:avoid;}
+  table.tbl tr{break-inside:avoid;}
+  table.tbl thead{display:table-header-group;}
+  h3.big,h4.sub,.sec-head,p.dek{break-after:avoid;}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
+}
