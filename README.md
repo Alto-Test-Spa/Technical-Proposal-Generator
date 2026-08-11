@@ -9,9 +9,11 @@ Abrir `index.html` con doble clic. Se escribe directamente sobre el
 documento; el contenido se guarda solo en el navegador y se conserva al
 cerrarlo. El botón **Ayuda** de la barra explica lo básico.
 
-Para la propuesta siguiente se parte de la anterior: se editan los datos del
-nuevo cliente y se imprime. *Conviene revisar que no quede ningún dato del
-cliente anterior antes de enviar el PDF.*
+Para la propuesta siguiente hay dos caminos. **Nueva** devuelve el documento a
+su contenido original con folio y fecha del día — es lo recomendable, porque
+así no queda ningún dato del cliente anterior en el PDF. O se parte de la
+anterior y se editan sólo los datos que cambian, revisando bien antes de
+enviar.
 
 ## La barra
 
@@ -22,6 +24,8 @@ cliente anterior antes de enviar el PDF.*
 | **Foto** | Fotografía de fondo de la portada. El deslizador regula cuánto se oscurece para que el texto se lea. |
 | **Capítulos** | Elegir qué capítulos incluye esta propuesta. |
 | **Guías** | Muestra u oculta el subrayado punteado de todo lo editable. |
+| **Nueva** | Vuelve al documento original, con folio y fecha nuevos. Pide confirmación y borra lo escrito. |
+| **Deshacer** | Aparece sólo después de **Nueva** y recupera la propuesta anterior. Desaparece en cuanto se escribe algo. |
 | **Imprimir / PDF** | Genera el documento. Usar **Guardar como PDF de Chrome/Edge**: "Microsoft Print to PDF" rasteriza y pierde los enlaces del índice. |
 
 ## Cómo se escribe

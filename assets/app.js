@@ -15,6 +15,7 @@
 "use strict";
 
 const CLAVE_GUARDADO = "altotest_propuesta_tecnica_v3";
+const CLAVE_RESPALDO = CLAVE_GUARDADO + "_anterior";
 
 /* ───────────────────────── Utilidades base ───────────────────────── */
 const $  = (sel, raiz) => (raiz || document).querySelector(sel);
@@ -61,13 +62,17 @@ const Fmt = {
 /* ───────────────────────── Store · estado ────────────────────────── */
 const Store = {
   datos: null,
+  respaldo: false,   // ¿queda una propuesta anterior recuperable?
   _timer: null,
 
   iniciar(){
     this.datos = this._leer();
+    this._completar();
+    return this.datos;
+  },
+  _completar(){
     if(!this.datos.meta.fecha)  this.datos.meta.fecha  = Fmt.hoy();
     if(!this.datos.meta.codigo) this.datos.meta.codigo = Fmt.folio();
-    return this.datos;
   },
   _leer(){
     try{
@@ -81,21 +86,51 @@ const Store = {
 
   guardar(){
     clearTimeout(this._timer);
+    // En cuanto se escribe algo, la propuesta anterior deja de recuperarse.
+    if(this.respaldo){ this.respaldo = false; Vista.deshacer(); }
     Vista.estado("· guardando…");
-    this._timer = setTimeout(() => {
+    this._timer = setTimeout(() => this._escribir(), 400);
+  },
+  _escribir(){
+    try{
+      localStorage.setItem(CLAVE_GUARDADO, JSON.stringify(this.datos));
+      Vista.estado("· guardado " + Fmt.hora());
+    }catch(e){
+      // Casi siempre es la foto de portada: se guarda el resto sin ella.
       try{
-        localStorage.setItem(CLAVE_GUARDADO, JSON.stringify(this.datos));
-        Vista.estado("· guardado " + Fmt.hora());
-      }catch(e){
-        // Casi siempre es la foto de portada: se guarda el resto sin ella.
-        try{
-          const sinFoto = Object.assign({}, this.datos,
-            { portada: Object.assign({}, this.datos.portada, { img:"" }) });
-          localStorage.setItem(CLAVE_GUARDADO, JSON.stringify(sinFoto));
-          Vista.estado("· guardado, la foto pesa demasiado", true);
-        }catch(e2){ Vista.estado("· no se pudo guardar", true); }
-      }
-    }, 400);
+        const sinFoto = Object.assign({}, this.datos,
+          { portada: Object.assign({}, this.datos.portada, { img:"" }) });
+        localStorage.setItem(CLAVE_GUARDADO, JSON.stringify(sinFoto));
+        Vista.estado("· guardado, la foto pesa demasiado", true);
+      }catch(e2){ Vista.estado("· no se pudo guardar", true); }
+    }
+  },
+
+  /* Vuelve el documento a la plantilla original, con folio y fecha nuevos.
+     Lo anterior queda en un respaldo aparte hasta el próximo reinicio. */
+  reiniciar(){
+    clearTimeout(this._timer);
+    this.respaldo = false;
+    try{
+      localStorage.setItem(CLAVE_RESPALDO, JSON.stringify(this.datos));
+      this.respaldo = true;
+    }catch(e){ console.warn("No se pudo respaldar la propuesta anterior:", e); }
+    this.datos = plantilla();
+    this._completar();
+    this._escribir();
+  },
+  /* Deshacer sólo vale entre un reinicio y la primera edición. */
+  deshacer(){
+    if(!this.respaldo) return false;
+    try{
+      const crudo = localStorage.getItem(CLAVE_RESPALDO);
+      if(!crudo) return false;
+      this.datos = Object.assign(plantilla(), JSON.parse(crudo));
+    }catch(e){ console.warn("No se pudo recuperar el respaldo:", e); return false; }
+    localStorage.removeItem(CLAVE_RESPALDO);
+    this.respaldo = false;
+    this._escribir();
+    return true;
   }
 };
 const S = () => Store.datos;   // atajo de lectura
@@ -147,6 +182,20 @@ const Texto = {
   },
 
   /* Vuelca el estado en los campos sueltos del documento (data-k) */
+  /* Texto de fábrica de cada campo suelto. Se toma una sola vez, antes de
+     pintar nada: es lo que se restituye al empezar una propuesta nueva.
+     Sin esto, reiniciar adoptaría como "original" lo que quedó en pantalla. */
+  ORIGINALES: null,
+  guardarOriginales(){
+    if(this.ORIGINALES) return;
+    this.ORIGINALES = {};
+    $$('.ed[data-k]').forEach(el => {
+      if(el.dataset.lista) return;
+      this.ORIGINALES[el.dataset.k] = this._enBruto(el);
+    });
+  },
+  _enBruto(el){ return (this.esRico(el) ? el.innerHTML : el.textContent).trim(); },
+
   pintarCampos(){
     $$('.ed[data-k]').forEach(el => {
       if(el.dataset.lista) return;                 // los de listas se pintan solos
@@ -158,7 +207,15 @@ const Texto = {
         if(this.esRico(el)) el.innerHTML = this.sanear(S().campos[k]);
         else                el.textContent = S().campos[k];
       }else{
-        S().campos[k] = this.esRico(el) ? el.innerHTML.trim() : el.textContent.trim();
+        // Sin valor guardado: vuelve el texto de fábrica. Los campos que nacen
+        // dibujados (las descripciones del índice) ya llegan con el suyo.
+        const orig = (this.ORIGINALES && k in this.ORIGINALES)
+                     ? this.ORIGINALES[k] : this._enBruto(el);
+        if(this._enBruto(el) !== orig){
+          if(this.esRico(el)) el.innerHTML = orig;
+          else                el.textContent = orig;
+        }
+        S().campos[k] = orig;
       }
     });
   }
@@ -546,6 +603,12 @@ const Vista = {
     const on = !!S().ui.guias;
     document.body.classList.toggle('guias', on);
     $('#btnGuias').classList.toggle('on', on);
+  },
+
+  /* Deshacer aparece sólo mientras la propuesta anterior siga recuperable */
+  deshacer(){
+    const b = $('#btnDeshacer');
+    if(b) b.hidden = !Store.respaldo;
   }
 };
 
@@ -561,6 +624,7 @@ const App = {
     Vista.portada();
     Vista.panelSecciones();
     Vista.guias();
+    Vista.deshacer();
     Vista.iconos();
   },
 
@@ -696,6 +760,29 @@ const App = {
       $('#btnAyuda').classList.toggle('on', !p.hidden);
     });
 
+    /* Empezar de nuevo: la plantilla original, con folio y fecha del día */
+    $('#btnNuevo').addEventListener('click', () => {
+      const ok = confirm(
+        "¿Empezar una propuesta nueva?\n\n" +
+        "El documento vuelve a su contenido original y recibe un número y una " +
+        "fecha nuevos. Se pierde todo lo que escribió en esta propuesta.\n\n" +
+        "Si se arrepiente, el botón Deshacer la recupera mientras no escriba nada."
+      );
+      if(!ok) return;
+      Store.reiniciar();
+      this.dibujar();
+      Vista.estado("· propuesta nueva " + Fmt.hora());
+    });
+    $('#btnDeshacer').addEventListener('click', () => {
+      if(Store.deshacer()){
+        this.dibujar();
+        Vista.estado("· se recuperó la propuesta anterior");
+      }else{
+        Vista.deshacer();
+        Vista.estado("· ya no se puede recuperar", true);
+      }
+    });
+
     /* Foto de portada: se reduce a 1800 px antes de guardarla */
     $('#btnFoto').addEventListener('click', () => $('#fileFoto').click());
     $('#fileFoto').addEventListener('change', e => {
@@ -733,6 +820,7 @@ const App = {
 
   iniciar(){
     try{ document.execCommand('styleWithCSS', false, false); }catch(e){ /* negritas como <b> */ }
+    Texto.guardarOriginales();   // antes de pintar: el HTML todavía es el de fábrica
     Store.iniciar();
     this.dibujar();
     this._edicion();

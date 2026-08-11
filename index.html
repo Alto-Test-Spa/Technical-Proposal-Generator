@@ -55,6 +55,12 @@
   <button class="tb-btn ghost" id="btnAyuda" title="Cómo se usa esta plantilla">
     <i data-lucide="help-circle" class="ic"></i>Ayuda
   </button>
+  <button class="tb-btn ghost" id="btnNuevo" title="Volver al documento original y empezar una propuesta nueva">
+    <i data-lucide="file-plus" class="ic"></i>Nueva
+  </button>
+  <button class="tb-btn ghost" id="btnDeshacer" title="Recuperar la propuesta anterior" hidden>
+    <i data-lucide="undo-2" class="ic"></i>Deshacer
+  </button>
   <button class="tb-btn" onclick="window.print()"><i data-lucide="printer" class="ic"></i>Imprimir / PDF</button>
 
   <input type="file" id="fileFoto" accept="image/*" hidden>
@@ -98,6 +104,7 @@
       <ul>
         <li><b>Foto</b> pone una imagen de fondo en la portada; el deslizador la oscurece para que el texto se lea.</li>
         <li>Se guarda solo en este navegador mientras escribe.</li>
+        <li><b>Nueva</b> devuelve el documento a su contenido original, con número y fecha nuevos: úselo al empezar cada propuesta. <b>Deshacer</b> recupera la anterior mientras no escriba nada.</li>
         <li><b>Imprimir / PDF</b> genera el documento en tamaño carta.</li>
         <li>La <b>línea naranja punteada</b> marca dónde corta cada hoja.</li>
       </ul>

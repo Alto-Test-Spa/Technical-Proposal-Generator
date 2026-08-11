@@ -114,16 +114,18 @@ artefactos que no se ven a simple vista.
 
 ## Decisiones del usuario (Matías) — no revertir sin pedir
 
-- Fuera Exportar, Importar y Restablecer: un solo botón de imprimir. Se dejó
-  Guías y Ayuda. *Riesgo conocido y aceptado: sin restablecer, la propuesta
-  siguiente parte de la anterior.*
+- Fuera Exportar e Importar: un solo botón de imprimir. Se dejó Guías y Ayuda.
+- **Nueva + Deshacer** (11/08/2026): Camilo usó la plantilla y pidió volver al
+  documento original en vez de re-editarlo todo. `Store.reiniciar()` deja lo
+  anterior en `CLAVE_RESPALDO` y `Store.deshacer()` lo recupera; el respaldo se
+  quema en la primera edición (`Store.guardar()` apaga `Store.respaldo`), y el
+  botón Deshacer sigue esa bandera vía `Vista.deshacer()`. No es el
+  "Restablecer" que se sacó: pide confirmación y tiene vuelta atrás.
 - Folio con prefijo `PT-`, formato igual al `COT-` de la propuesta económica.
 - Código prolijo, DRY, contenido separado de la lógica, `index.html` corto.
 - Pide actuar como diseñador/UX/PM: proponer mejoras, no sólo ejecutar.
 
 ## Pendientes propuestos
 
-- Un botón "Nueva propuesta" (limpiar + folio nuevo) si el arranque desde la
-  propuesta anterior llega a molestar.
 - Actualizar `../CONTEXTO.md`, que no menciona esta carpeta.
-- Esta carpeta no es repo git; falta definir remoto en `Alto-Test-Spa`.
+- Repo: `Alto-Test-Spa/Technical-Proposal-Generator`, se trabaja sobre `main`.
