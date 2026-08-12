@@ -49,7 +49,7 @@
   <button class="tb-btn ghost" id="btnGuias" title="Mostrar u ocultar el subrayado de los campos editables">
     <i data-lucide="pencil-line" class="ic"></i>Guías
   </button>
-  <button class="tb-btn ghost" id="btnSecciones" title="Elegir qué capítulos incluye la propuesta">
+  <button class="tb-btn ghost" id="btnSecciones" title="Elegir qué capítulos y subtítulos incluye la propuesta">
     <i data-lucide="layout-list" class="ic"></i>Capítulos
   </button>
   <button class="tb-btn ghost" id="btnAyuda" title="Cómo se usa esta plantilla">
@@ -68,12 +68,13 @@
 
 <!-- Capítulos: se pueden dejar fuera y el documento se reordena solo -->
 <div class="ayuda no-print" id="panelSecciones" hidden>
-  <h5>Capítulos de esta propuesta</h5>
+  <h5>Capítulos y subtítulos de esta propuesta</h5>
   <div class="secs" id="listaSecciones"></div>
   <p style="margin:12px 0 0;font-size:11.5px;">
-    Desmarque un capítulo para dejarlo fuera: se quita del documento y del índice, y
-    <b>la numeración, los subtítulos y los enlaces se reordenan solos</b>.
-    Su contenido no se borra — vuelve a aparecer si lo marca de nuevo.
+    Desmarque un <b>capítulo</b> para dejarlo fuera, o un <b>subtítulo</b> para sacar
+    ese bloque con su tabla o su lista. Todo lo demás
+    <b>se renumera y se reordena solo</b>, en el documento y en el índice.
+    Nada se borra: vuelve a aparecer si lo marca de nuevo.
   </p>
 </div>
 
@@ -86,6 +87,7 @@
         <li>Haga clic sobre cualquier texto <b>subrayado con puntos</b> y escriba encima.</li>
         <li><b>Ctrl + B</b> pone una palabra en negrita.</li>
         <li>En las listas, <b>Enter</b> crea el punto siguiente.</li>
+        <li>En los textos largos, <b>Enter</b> abre un párrafo nuevo y <b>Shift + Enter</b> corta la línea sin separar.</li>
         <li>Los textos pegados desde Word entran limpios, sin colores ni fuentes ajenas.</li>
       </ul>
     </div>
@@ -96,7 +98,7 @@
         <li>En la carta Gantt, <b>clic</b> sobre una celda marca el período.</li>
         <li><b>Alt + clic</b> convierte esa actividad en <b>hito</b> (barra naranja).</li>
         <li>Las cifras marcadas <b>calculado</b> se actualizan solas: no se escriben.</li>
-        <li><b>Capítulos</b> permite dejar fuera los que no apliquen; todo se renumera solo.</li>
+        <li><b>Capítulos</b> permite dejar fuera los capítulos o los subtítulos que no apliquen; todo se renumera solo.</li>
       </ul>
     </div>
     <div>
@@ -191,12 +193,12 @@
 
   <div class="darkbox" style="margin-bottom:18px;">
     <p class="eyebrow">Objetivo</p>
-    <p class="lead ed rich" data-k="s1.objetivo" data-ph="Objetivo en una frase">Dejar su sistema de protección contra caídas <b>certificado y trazable</b>, y acompañarlo con el plan de seguimiento que mantiene esa condición vigente en el tiempo.</p>
+    <div class="lead ed rich" data-k="s1.objetivo" data-ph="Objetivo en una frase">Dejar su sistema de protección contra caídas <b>certificado y trazable</b>, y acompañarlo con el plan de seguimiento que mantiene esa condición vigente en el tiempo.</div>
   </div>
 
-  <p class="lead ed rich" data-k="s1.antecedentes" data-ph="Párrafo de antecedentes (breve)">A solicitud suya visitamos la instalación para conocer las condiciones de trabajo en altura. El levantamiento muestra la conveniencia de contar con un <b>sistema permanente</b>: diseñado conforme a norma, instalado por personal especializado y respaldado con ensayos verificables.</p>
+  <div class="lead ed rich" data-k="s1.antecedentes" data-ph="Párrafo de antecedentes (breve)">A solicitud suya visitamos la instalación para conocer las condiciones de trabajo en altura. El levantamiento muestra la conveniencia de contar con un <b>sistema permanente</b>: diseñado conforme a norma, instalado por personal especializado y respaldado con ensayos verificables.</div>
 
-  <h4 class="sub" data-ic="alert-triangle"><span class="nsub"></span>Hallazgos del levantamiento · matriz de criticidad</h4>
+  <h4 class="sub" data-sub="hallazgos" data-ic="alert-triangle"><span class="nsub"></span>Hallazgos del levantamiento · matriz de criticidad</h4>
   <table class="tbl">
     <thead><tr>
       <th style="width:26%">Hallazgo</th><th style="width:52%">Situación observada</th>
@@ -207,7 +209,7 @@
   <button class="addrow no-print" data-agregar="hallazgos"><i data-lucide="plus" class="ic"></i>Agregar hallazgo</button>
   <p class="fine ed" data-k="s1.notaCrit" data-ph="Nota de la matriz">Criticidad según el criterio Alto Test: <b>Crítica</b> (acción inmediata) · <b>Importante</b> (corrección programada) · <b>Mejora futura</b> (optimización planificada).</p>
 
-  <h4 class="sub" data-ic="lightbulb"><span class="nsub"></span>Por qué le proponemos esto</h4>
+  <h4 class="sub" data-sub="justif" data-ic="lightbulb"><span class="nsub"></span>Por qué le proponemos esto</h4>
   <div data-lista-cont="justif"></div>
   <button class="addrow no-print" data-agregar="justif"><i data-lucide="plus" class="ic"></i>Agregar argumento</button>
 
@@ -221,10 +223,10 @@
   <h3 class="big ed" data-k="s2.titulo" data-ph="Título">Trabajamos con la norma como criterio compartido.</h3>
   <p class="dek ed" data-k="s2.dek" data-ph="Subtítulo breve">Así, cada compromiso de esta propuesta puede verificarse contra una referencia conocida por ambas partes.</p>
 
-  <h4 class="sub" data-ic="book-open"><span class="nsub"></span>Normativa aplicable</h4>
+  <h4 class="sub" data-sub="normativa" data-ic="book-open"><span class="nsub"></span>Normativa aplicable</h4>
   <div class="chips" data-lista-cont="chips"></div>
 
-  <h4 class="sub" data-ic="table-2"><span class="nsub"></span>Qué exige cada norma</h4>
+  <h4 class="sub" data-sub="exigencias" data-ic="table-2"><span class="nsub"></span>Qué exige cada norma</h4>
   <table class="tbl">
     <thead><tr>
       <th style="width:20%">Norma</th><th style="width:38%">Alcance</th>
@@ -245,7 +247,7 @@
   <h3 class="big ed" data-k="s3.titulo" data-ph="Título">Qué contempla el servicio.</h3>
   <p class="dek ed" data-k="s3.dek" data-ph="Subtítulo breve">Partidas comprometidas para la instalación individualizada en la portada. Lo que queda fuera está en el capítulo de condiciones.</p>
 
-  <h4 class="sub" data-ic="list-checks"><span class="nsub"></span>Partidas del servicio</h4>
+  <h4 class="sub" data-sub="partidas" data-ic="list-checks"><span class="nsub"></span>Partidas del servicio</h4>
   <table class="tbl">
     <thead><tr>
       <th class="c" style="width:7%">Ítem</th><th style="width:53%">Descripción de la partida</th>
@@ -257,7 +259,7 @@
   <button class="addrow no-print" data-agregar="alcances"><i data-lucide="plus" class="ic"></i>Agregar partida</button>
   <p class="fine ed" data-k="s3.nota" data-ph="Nota sobre las cantidades">Las cantidades finales se confirman en el levantamiento previo a la ejecución; cualquier variación se conversa antes de ejecutarse.</p>
 
-  <h4 class="sub" data-ic="settings-2"><span class="nsub"></span>Características técnicas del sistema</h4>
+  <h4 class="sub" data-sub="especificaciones" data-ic="settings-2"><span class="nsub"></span>Características técnicas del sistema</h4>
   <table class="tbl">
     <thead><tr>
       <th style="width:36%">Parámetro</th><th style="width:64%">Especificación</th><th class="act no-print"></th>
@@ -281,7 +283,7 @@
     <span class="ed" data-k="s4.ciclo" data-ph="Nota del ciclo">Cada auditoría genera un nuevo diagnóstico: así el sistema mejora en cada vuelta.</span>
   </div>
 
-  <h4 class="sub" data-ic="workflow"><span class="nsub"></span>Actividades por etapa</h4>
+  <h4 class="sub" data-sub="actividades" data-ic="workflow"><span class="nsub"></span>Actividades por etapa</h4>
   <table class="tbl">
     <thead><tr>
       <th class="c" style="width:8%">Etapa</th><th style="width:26%">Actividad</th>
@@ -322,7 +324,7 @@
   </div>
   <p class="fine ed" data-k="s5.nota" data-ph="Nota sobre los plazos">(*) Plazo referencial. Si el clima, el acceso o una autorización lo modifican, se lo informamos y reprogramamos de común acuerdo.</p>
 
-  <h4 class="sub" data-ic="calendar-clock"><span class="nsub"></span>Hitos de coordinación con usted</h4>
+  <h4 class="sub" data-sub="hitos" data-ic="calendar-clock"><span class="nsub"></span>Hitos de coordinación con usted</h4>
   <table class="tbl">
     <thead><tr>
       <th style="width:28%">Instancia</th><th style="width:44%">Qué se define</th>
@@ -332,7 +334,7 @@
   </table>
   <button class="addrow no-print" data-agregar="coordinacion"><i data-lucide="plus" class="ic"></i>Agregar instancia</button>
 
-  <h4 class="sub" data-ic="users"><span class="nsub"></span>Quiénes lo atienden</h4>
+  <h4 class="sub" data-sub="equipo" data-ic="users"><span class="nsub"></span>Quiénes lo atienden</h4>
   <table class="tbl">
     <thead><tr>
       <th style="width:34%">Rol</th><th style="width:66%">Responsabilidad en el servicio</th><th class="act no-print"></th>
@@ -362,7 +364,7 @@
 
   <div class="darkbox" style="margin-top:20px;">
     <p class="eyebrow">Nuestro compromiso</p>
-    <p class="lead ed rich" data-k="s6.cierre" data-ph="Compromiso de cierre">Ningún punto se entrega sin ensayo, sin registro y sin identificación individual. Si alguno no cumple, <b>se lo decimos a tiempo</b> y le proponemos cómo corregirlo.</p>
+    <div class="lead ed rich" data-k="s6.cierre" data-ph="Compromiso de cierre">Ningún punto se entrega sin ensayo, sin registro y sin identificación individual. Si alguno no cumple, <b>se lo decimos a tiempo</b> y le proponemos cómo corregirlo.</div>
   </div>
 
   <div class="foot"></div>
@@ -375,7 +377,7 @@
   <h3 class="big ed" data-k="s7.titulo" data-ph="Título">Lo que queda documentado para usted.</h3>
   <p class="dek ed" data-k="s7.dek" data-ph="Subtítulo breve">Todo en digital (PDF) y, si lo necesita, en copia física firmada.</p>
 
-  <h4 class="sub" data-ic="files"><span class="nsub"></span>Documentación del servicio</h4>
+  <h4 class="sub" data-sub="entregables" data-ic="files"><span class="nsub"></span>Documentación del servicio</h4>
   <table class="tbl">
     <thead><tr>
       <th class="c" style="width:9%">N°</th><th style="width:33%">Entregable</th>
@@ -386,7 +388,7 @@
   </table>
   <button class="addrow no-print" data-agregar="entregables"><i data-lucide="plus" class="ic"></i>Agregar entregable</button>
 
-  <h4 class="sub" data-ic="paperclip"><span class="nsub"></span>Anexos de esta propuesta</h4>
+  <h4 class="sub" data-sub="anexos" data-ic="paperclip"><span class="nsub"></span>Anexos de esta propuesta</h4>
   <table class="tbl">
     <thead><tr>
       <th style="width:18%">Anexo</th><th style="width:58%">Descripción</th>
@@ -406,16 +408,16 @@
   <h3 class="big ed" data-k="s8.titulo" data-ph="Título">Cómo trabajamos y qué aporta cada parte.</h3>
   <p class="dek ed" data-k="s8.dek" data-ph="Subtítulo breve">Lo dejamos escrito desde el comienzo para que no haya sorpresas para nadie.</p>
 
-  <h4 class="sub" data-ic="settings-2"><span class="nsub"></span>Cómo ejecutamos el servicio<span class="quien">Lo aporta Alto Test</span></h4>
+  <h4 class="sub" data-sub="ejecucion" data-ic="settings-2"><span class="nsub"></span>Cómo ejecutamos el servicio<span class="quien">Lo aporta Alto Test</span></h4>
   <ul class="blist" data-lista-cont="condiciones"></ul>
   <button class="addrow no-print" data-agregar="condiciones"><i data-lucide="plus" class="ic"></i>Agregar condición</button>
 
-  <h4 class="sub" data-ic="user-check"><span class="nsub"></span>Lo que necesitamos de usted<span class="quien cliente">Lo aporta el cliente</span></h4>
+  <h4 class="sub" data-sub="cliente" data-ic="user-check"><span class="nsub"></span>Lo que necesitamos de usted<span class="quien cliente">Lo aporta el cliente</span></h4>
   <ul class="blist" data-lista-cont="responsabilidades"></ul>
   <button class="addrow no-print" data-agregar="responsabilidades"><i data-lucide="plus" class="ic"></i>Agregar punto</button>
 
-  <h4 class="sub" data-ic="circle-slash"><span class="nsub"></span>Fuera de este alcance<span class="quien fuera">No incluido</span></h4>
-  <p class="lead ed rich" data-k="s8.exclIntro" data-ph="Encabezado de exclusiones">Lo siguiente no está incluido en esta propuesta. Si lo necesita, <b>lo cotizamos aparte</b> o lo coordinamos con su proveedor habitual.</p>
+  <h4 class="sub" data-sub="exclusiones" data-ic="circle-slash"><span class="nsub"></span>Fuera de este alcance<span class="quien fuera">No incluido</span></h4>
+  <div class="lead ed rich" data-k="s8.exclIntro" data-ph="Encabezado de exclusiones">Lo siguiente no está incluido en esta propuesta. Si lo necesita, <b>lo cotizamos aparte</b> o lo coordinamos con su proveedor habitual.</div>
   <ul class="blist neg" data-lista-cont="exclusiones"></ul>
   <button class="addrow no-print" data-agregar="exclusiones"><i data-lucide="plus" class="ic"></i>Agregar exclusión</button>
 
@@ -429,15 +431,16 @@
   <h3 class="big ed" data-k="s9.titulo" data-ph="Título">Demos el primer paso.</h3>
   <p class="dek ed" data-k="s9.dek" data-ph="Subtítulo breve">Cómo se formaliza, cómo coordinamos y qué sigue después de la entrega.</p>
 
-  <h4 class="sub" data-ic="check-circle-2"><span class="nsub"></span>Cómo aceptar esta propuesta</h4>
+  <h4 class="sub" data-sub="aceptacion" data-ic="check-circle-2"><span class="nsub"></span>Cómo aceptar esta propuesta</h4>
   <ul class="blist" data-lista-cont="aceptacion"></ul>
   <button class="addrow no-print" data-agregar="aceptacion"><i data-lucide="plus" class="ic"></i>Agregar punto</button>
 
-  <h4 class="sub" data-ic="repeat"><span class="nsub"></span>Después de la entrega</h4>
+  <h4 class="sub" data-sub="despues" data-ic="repeat"><span class="nsub"></span>Después de la entrega</h4>
   <div class="socio" data-lista-cont="acompanamiento"></div>
 
-  <div class="darkbox" style="margin-top:20px;">
-    <p class="lead ed rich" data-k="s9.cierre" data-ph="Cierre">Esta propuesta técnica se acompaña de la <b>propuesta económica</b> asociada. Más que ejecutar un servicio, queremos ser el socio técnico que acompaña sus sistemas durante toda su vida útil.</p>
+  <!-- data-fin-sub: cierre del capítulo, ya no pertenece al subtítulo anterior -->
+  <div class="darkbox" data-fin-sub style="margin-top:20px;">
+    <div class="lead ed rich" data-k="s9.cierre" data-ph="Cierre">Esta propuesta técnica se acompaña de la <b>propuesta económica</b> asociada. Más que ejecutar un servicio, queremos ser el socio técnico que acompaña sus sistemas durante toda su vida útil.</div>
   </div>
 
   <div class="signrow">

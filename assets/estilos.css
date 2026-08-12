@@ -53,12 +53,19 @@ input[type=range]{width:74px;accent-color:var(--signal);}
 .ayuda b{color:var(--paper);}
 .ayuda .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
 /* Panel de capítulos */
-.ayuda .secs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 20px;}
+.ayuda .secs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 20px;align-items:start;}
 .secitem{display:flex;align-items:center;gap:9px;font-size:12px;cursor:pointer;padding:3px 0;}
 .secitem input{accent-color:var(--signal);cursor:pointer;}
 .secitem .sn{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--signal);min-width:20px;}
 .secitem.off{color:var(--steel);}
 .secitem.off .sn{color:var(--steel);}
+/* Subtítulos de cada capítulo: se sacan igual que el capítulo mismo */
+.secgrp .subs{margin-left:25px;border-left:1px solid rgba(244,245,242,0.12);padding-left:10px;}
+.secitem.hijo{font-size:11px;padding:1px 0;color:var(--mist);}
+.secitem.hijo .sn{font-size:9.5px;min-width:24px;}
+.secitem.hijo.off{color:var(--steel);}
+/* Capítulo fuera: sus subtítulos dejan de importar */
+.secgrp.off .subs{display:none;}
 
 /* ══════════════ Hoja y paginación ══════════════ */
 .sheet{width:100%;max-width:var(--page-w);margin:0 auto;background:var(--paper);position:relative;}
@@ -71,6 +78,8 @@ input[type=range]{width:74px;accent-color:var(--signal);}
 .page.dark .foot{color:var(--lsteel);}
 /* Capítulo dejado fuera: no se muestra ni se imprime; su contenido se conserva */
 .page.fuera{display:none !important;}
+/* Lo mismo para un subtítulo y el bloque que arrastra consigo */
+.oculto{display:none !important;}
 .foot .foot-cod{font-weight:400;color:var(--lsteel);}
 @media screen{
   .page{margin-bottom:24px;box-shadow:0 0 0 1px rgba(16,21,30,0.06),0 20px 44px -24px rgba(16,21,30,0.4);}
@@ -137,8 +146,13 @@ h4.sub .quien{margin-left:auto;font-size:8.5px;letter-spacing:0.12em;padding:2px
               border:1px solid var(--signal);color:var(--signal);text-transform:uppercase;}
 h4.sub .quien.cliente{border-color:var(--steel);color:var(--steel);}
 h4.sub .quien.fuera{border-color:var(--line2);color:var(--lsteel);}
-.lead{font-size:13px;line-height:1.55;color:var(--ink2);margin:0 0 11px;max-width:94%;}
+.lead{font-size:13px;line-height:1.62;color:var(--ink2);margin:0 0 11px;max-width:94%;
+      text-align:justify;text-justify:inter-word;hyphens:auto;}
 .lead b,.lead strong{font-weight:600;color:var(--ink);}
+/* Cada Enter en un campo de prosa abre un párrafo: se separa del anterior.
+   Shift + Enter deja un salto de línea dentro del mismo párrafo. */
+.rich div{margin-top:0.62em;}
+.rich div:first-child{margin-top:0;}
 .fine{font-size:10.5px;line-height:1.5;color:var(--steel);margin:6px 0 0;}
 .fine b{color:var(--ink2);}
 

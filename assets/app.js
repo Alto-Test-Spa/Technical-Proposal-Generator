@@ -137,10 +137,17 @@ const S = () => Store.datos;   // atajo de lectura
 
 /* ───────────────── Texto · campos y formato permitido ───────────── */
 const Texto = {
-  /* En los campos de prosa se permite negrita y cursiva; nada más. */
-  PERMITIDAS: { B:1, STRONG:1, I:1, EM:1, BR:1 },
+  /* En los campos de prosa se permite negrita, cursiva y el corte de
+     párrafo. El párrafo es un <div>: es lo que produce el navegador al
+     apretar Enter dentro de un campo editable, y lo que la hoja de
+     estilos sabe separar. Shift + Enter deja un <br> dentro del mismo
+     párrafo, sin aire extra. */
+  PERMITIDAS: { B:1, STRONG:1, I:1, EM:1, BR:1, DIV:1 },
 
   esRico: el => el.classList.contains('rich'),
+  /* Campos de prosa: admiten varios párrafos. Son los .rich sueltos; los
+     de una lista viven en una celda o una viñeta y quedan en una línea. */
+  enBloques(el){ return this.esRico(el) && !el.dataset.lista; },
   valor(el){ return this.esRico(el) ? el.innerHTML : el.textContent; },
 
   limpiar(el){
@@ -158,6 +165,9 @@ const Texto = {
       });
       if(!quedaba) break;
     }
+    /* Un campo vaciado suele quedar con un <div><br></div> invisible: sin
+       esto deja de estar :empty y no vuelve a mostrar su texto de ayuda. */
+    if(!el.textContent.trim()) el.innerHTML = "";
   },
   /* Sanea un texto guardado antes de mostrarlo */
   sanear(html){
@@ -416,6 +426,41 @@ const Capitulos = {
   numero(id){
     const i = this.visibles().findIndex(sec => sec.id === id);
     return i === -1 ? null : dosDigitos(i+1);
+  },
+
+  /* Subtítulos de un capítulo, leídos del propio documento: cada uno se
+     declara una sola vez en el HTML con data-sub. Se excluyen igual que
+     un capítulo (misma lista `fuera`, con el id "sN.slug") y el resto se
+     renumera solo: si se saca el 3.1, el que era 3.2 pasa a ser 3.1. */
+  subs(secId){
+    const pagina = $('[data-sec="'+secId+'"]');
+    if(!pagina) return [];
+    const n = this.numero(secId);
+    let k = 0;
+    return $$('h4.sub[data-sub]', pagina).map(h => {
+      const id = secId + '.' + h.dataset.sub, dentro = this.activo(id);
+      return { id, h, dentro,
+               numero: dentro && n !== null ? (+n) + '.' + (++k) : null,
+               titulo: this._titulo(h) };
+    });
+  },
+  /* El título limpio: sin el número, sin el ícono y sin la etiqueta de quién aporta */
+  _titulo(h){
+    const copia = h.cloneNode(true);
+    $$('.nsub, .quien, .ic, svg', copia).forEach(el => el.remove());
+    return copia.textContent.trim();
+  },
+
+  /* Lo que un subtítulo arrastra consigo: todo lo que va detrás hasta el
+     subtítulo siguiente. El pie de página y lo marcado con data-fin-sub
+     (el cierre y las firmas) son del capítulo y nunca se tocan. */
+  bloque(h){
+    const trozos = [];
+    for(let el = h.nextElementSibling; el; el = el.nextElementSibling){
+      if(el.matches('h4.sub, .foot, [data-fin-sub]')) break;
+      trozos.push(el);
+    }
+    return trozos;
   }
 };
 
@@ -444,9 +489,14 @@ const Vista = {
       pagina.classList.toggle('fuera', n === null);
       if(n === null) return;           // capítulo excluido: no se numera ni dibuja
 
-      // Los subtítulos heredan el número del capítulo: 3.1, 3.2, …
-      $$('h4.sub .nsub', pagina).forEach((el,j) => {
-        el.textContent = (+n) + '.' + (j+1) + ' ';
+      /* Los subtítulos heredan el número del capítulo: 3.1, 3.2, … Los que
+         se dejaron fuera se ocultan con todo lo que cuelga de ellos y no
+         consumen numeración; su contenido se conserva. */
+      Capitulos.subs(sec.id).forEach(sub => {
+        const nsub = $('.nsub', sub.h);
+        if(nsub && sub.numero) nsub.textContent = sub.numero + ' ';
+        sub.h.classList.toggle('oculto', !sub.dentro);
+        Capitulos.bloque(sub.h).forEach(el => el.classList.toggle('oculto', !sub.dentro));
       });
 
       const cab = $('.sec-head', pagina), pie = $('.foot', pagina);
@@ -484,7 +534,8 @@ const Vista = {
     }).join("");
 
     if(kpis){
-      kpis.innerHTML = KPIS.filter(k => !k.sec || Capitulos.activo(k.sec)).map(k => {
+      kpis.innerHTML = KPIS.filter(k => (!k.sec || Capitulos.activo(k.sec)) &&
+                                  (!k.sub || Capitulos.activo(k.sub))).map(k => {
         const valor = k.plazo ? this._plazo() : (S()[k.lista] || []).length;
         return '<div class="kpi"><div class="kt">'+ic(k.icono)+
                '<span class="auto-tag no-print">'+ic('sparkles')+'calculado</span></div>'+
@@ -586,15 +637,22 @@ const Vista = {
            dosDigitos(v.getMonth()+1) + "/" + v.getFullYear();
   },
 
-  /* Panel para incluir o excluir capítulos */
+  /* Panel para incluir o excluir capítulos y sus subtítulos */
   panelSecciones(){
     const caja = $('#listaSecciones');
     if(!caja) return;
+    const casilla = (id, num, titulo, clase) =>
+      '<label class="secitem'+(clase ? ' '+clase : '')+(num === null ? ' off' : '')+'">'+
+        '<input type="checkbox" data-capitulo="'+id+'"'+(num === null ? '' : ' checked')+'>'+
+        '<span class="sn">'+(num === null ? '—' : num)+'</span>'+esc(titulo)+'</label>';
+
     caja.innerHTML = SECCIONES.map(sec => {
       const n = Capitulos.numero(sec.id);
-      return '<label class="secitem'+(n === null ? ' off' : '')+'">'+
-        '<input type="checkbox" data-capitulo="'+sec.id+'"'+(n === null ? '' : ' checked')+'>'+
-        '<span class="sn">'+(n === null ? '—' : n)+'</span>'+esc(sec.titulo)+'</label>';
+      const subs = Capitulos.subs(sec.id)
+        .map(sub => casilla(sub.id, sub.numero, sub.titulo, 'hijo')).join("");
+      return '<div class="secgrp'+(n === null ? ' off' : '')+'">'+
+        casilla(sec.id, n, sec.titulo) +
+        (subs ? '<div class="subs">'+subs+'</div>' : '') + '</div>';
     }).join("");
   },
 
@@ -657,15 +715,26 @@ const App = {
       Store.guardar();
     });
 
-    // Pegar siempre como texto plano: nada de estilos traídos de Word
+    // Pegar siempre como texto plano: nada de estilos traídos de Word.
+    // En la prosa se respetan los cortes de párrafo del original; en una
+    // celda o una viñeta el texto entra en una sola línea.
     document.addEventListener('paste', e => {
-      if(!e.target.isContentEditable) return;
+      const el = e.target;
+      if(!el.isContentEditable) return;
       e.preventDefault();
       const txt = (e.clipboardData || window.clipboardData).getData('text/plain');
-      document.execCommand('insertText', false, txt.replace(/\s*\n\s*/g,' '));
+      if(!Texto.enBloques(el)){
+        document.execCommand('insertText', false, txt.replace(/\s*\n\s*/g,' '));
+        return;
+      }
+      const partes = txt.split(/\n+/).map(t => t.trim()).filter(Boolean);
+      if(!partes.length) return;
+      document.execCommand('insertHTML', false, esc(partes[0]) +
+        partes.slice(1).map(p => '<div>'+esc(p)+'</div>').join(""));
     });
 
-    // Enter: en una viñeta abre el punto siguiente; en un título o celda, nada
+    // Enter: en una viñeta abre el punto siguiente; en la prosa abre un
+    // párrafo nuevo; en un título, una celda o una tarjeta, nada.
     document.addEventListener('keydown', e => {
       if(e.key !== 'Enter' || e.shiftKey) return;
       const el = e.target;
@@ -674,7 +743,7 @@ const App = {
       if(esq && esq.tipo === 'vinetas'){
         e.preventDefault();
         Listas.insertarDespues(lista, +el.dataset.i);
-      }else if(el.closest('td, .glabel, .chip, h3.big, p.dek, .datagrid, .doctype')){
+      }else if(lista || el.closest('td, .glabel, .chip, h3.big, p.dek, .datagrid, .doctype')){
         e.preventDefault();
       }
     });
@@ -820,6 +889,7 @@ const App = {
 
   iniciar(){
     try{ document.execCommand('styleWithCSS', false, false); }catch(e){ /* negritas como <b> */ }
+    try{ document.execCommand('defaultParagraphSeparator', false, 'div'); }catch(e){ /* párrafos como <div> */ }
     Texto.guardarOriginales();   // antes de pintar: el HTML todavía es el de fábrica
     Store.iniciar();
     this.dibujar();

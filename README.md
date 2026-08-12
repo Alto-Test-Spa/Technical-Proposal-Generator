@@ -22,7 +22,7 @@ enviar.
 | **N°** | Folio `PT-aaaammdd-hhmmss`, mismo formato que las cotizaciones (`COT-…`). Se genera solo; el botón ↻ crea uno nuevo. Es editable, por si se quiere igualar al de su cotización. |
 | **Fecha · Vigencia** | La vigencia se calcula sobre la fecha y aparece en la portada. |
 | **Foto** | Fotografía de fondo de la portada. El deslizador regula cuánto se oscurece para que el texto se lea. |
-| **Capítulos** | Elegir qué capítulos incluye esta propuesta. |
+| **Capítulos** | Elegir qué capítulos y qué subtítulos incluye esta propuesta. |
 | **Guías** | Muestra u oculta el subrayado punteado de todo lo editable. |
 | **Nueva** | Vuelve al documento original, con folio y fecha nuevos. Pide confirmación y borra lo escrito. |
 | **Deshacer** | Aparece sólo después de **Nueva** y recupera la propuesta anterior. Desaparece en cuanto se escribe algo. |
@@ -34,6 +34,10 @@ enviar.
 - **Ctrl + B** para negrita (sólo se permiten negrita y cursiva; lo pegado
   desde Word entra limpio).
 - En las listas, **Enter** abre el punto siguiente.
+- En los textos largos (Objetivo, antecedentes, cierres), **Enter** abre un
+  **párrafo nuevo** —separado del anterior— y **Shift + Enter** corta la línea
+  sin separar. Al pegar desde Word se respetan los párrafos del original.
+- La prosa va **justificada**, con partición de palabras según el idioma.
 - *+ Agregar* suma una fila; la **×** del costado la elimina. Ninguno de esos
   controles se imprime.
 - En la carta Gantt, **clic** marca el período y **Alt + clic** convierte la
@@ -41,12 +45,17 @@ enviar.
 - Las cifras del índice marcadas *calculado* salen del contenido: no se
   escriben, y desaparecen si su capítulo se deja fuera.
 
-## Capítulos
+## Capítulos y subtítulos
 
 El botón **Capítulos** permite dejar fuera los que no apliquen. Al hacerlo se
 renumeran solos el índice, los encabezados, los pies, los subtítulos
 (`3.1`, `3.2`, …), los enlaces internos y las cifras del índice. El contenido
 excluido no se borra: vuelve tal cual si se marca de nuevo.
+
+Lo mismo vale **subtítulo por subtítulo**: cada uno aparece bajo su capítulo
+en el panel, y desmarcarlo se lleva su tabla, su lista y su botón *+ Agregar*.
+Los que quedan se renumeran (si sale el `3.1`, el `3.2` pasa a ser `3.1`) y las
+cifras del índice atadas a ese bloque desaparecen con él.
 
 Por eso los subtítulos **no llevan el número escrito en el HTML**, y los
 textos evitan citar capítulos por número ("está en el capítulo de
@@ -81,6 +90,11 @@ Los cuatro van juntos: si se mueve `index.html`, hay que llevarse `assets/`.
 - **Capítulo nuevo:** se agrega a `SECCIONES` (`contenido.js`) y se crea su
   `<section data-sec="…">` en `index.html`. Índice, numeración, enlaces y
   encabezados se generan solos.
+- **Subtítulo nuevo:** `<h4 class="sub" data-sub="slug" data-ic="…">` con su
+  `<span class="nsub"></span>` delante. Con eso ya se puede excluir y numerar;
+  arrastra consigo todo lo que va detrás hasta el subtítulo siguiente. Si algo
+  de ese tramo es cierre del capítulo (una firma, un remate), se marca con
+  `data-fin-sub` para que el corte se detenga ahí.
 
 ## Dependencias
 

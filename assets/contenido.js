@@ -33,11 +33,12 @@ const SECCIONES = [
 ];
 
 /* Cifras del índice: se calculan solas desde el contenido. */
-/* `sec` ata cada cifra a su capítulo: si ese capítulo se deja fuera de la
-   propuesta, la cifra desaparece del índice en vez de quedar huérfana. */
+/* `sec` ata cada cifra a su capítulo y `sub` a un subtítulo concreto: si
+   eso se deja fuera de la propuesta, la cifra desaparece del índice en vez
+   de quedar huérfana contando una tabla que ya no se muestra. */
 const KPIS = [
-  { icono:"list-checks",   lista:"alcances",    sec:"s3", label:"Partidas comprometidas" },
-  { icono:"files",         lista:"entregables", sec:"s7", label:"Entregables documentales" },
+  { icono:"list-checks",   lista:"alcances",    sec:"s3", sub:"s3.partidas",     label:"Partidas comprometidas" },
+  { icono:"files",         lista:"entregables", sec:"s7", sub:"s7.entregables",  label:"Entregables documentales" },
   { icono:"badge-check",   lista:"criterios",   sec:"s6", label:"Criterios verificados con usted" },
   { icono:"calendar-days", plazo:true,          sec:"s5", label:"Plazo referencial de ejecución" }
 ];

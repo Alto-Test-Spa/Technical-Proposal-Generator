@@ -51,9 +51,18 @@ assets/estilos.css    sistema visual + @media print
   `chips`. Agregar una lista = una entrada en `ESQUEMAS` + un contenedor.
 - **Campos sueltos**: `.ed[data-k]`; `contenteditable` se asigna **por JS**
   (`Texto.pintarCampos`), nunca en el HTML. Los `.rich` guardan `innerHTML`
-  saneado a `<b>/<i>/<br>`.
-- **Capítulos**: `Capitulos` calcula la numeración desde `SECCIONES` menos
-  `S().fuera`. Numera capítulos, subtítulos (`.nsub`), pies, índice y KPIs.
+  saneado a `<b>/<i>/<br>/<div>`. El `<div>` es el párrafo: Enter abre uno
+  nuevo (`.rich div{margin-top}` le da el aire) y Shift + Enter deja un `<br>`
+  dentro del mismo. Sólo los `.rich` **sin `data-lista`** admiten párrafos
+  (`Texto.enBloques`); en celdas y viñetas Enter sigue bloqueado. Por eso esos
+  cinco campos de prosa son `<div class="lead">` y no `<p>`.
+- **Capítulos y subtítulos**: `Capitulos` calcula la numeración desde
+  `SECCIONES` menos `S().fuera`. Numera capítulos, subtítulos (`.nsub`), pies,
+  índice y KPIs. Los subtítulos se declaran con `data-sub="slug"` en el `h4` y
+  se excluyen igual que un capítulo (mismo `S().fuera`, con id `sN.slug`):
+  `Capitulos.bloque()` se lleva todo lo que va detrás hasta el próximo `h4.sub`,
+  el `.foot` o un `[data-fin-sub]` (cierre o firmas del capítulo), marcándolo
+  con la clase `.oculto`. Un KPI puede atarse a un subtítulo con `sub:`.
 
 ## Invariantes — romperlas rompe el documento
 
@@ -115,6 +124,14 @@ artefactos que no se ven a simple vista.
 ## Decisiones del usuario (Matías) — no revertir sin pedir
 
 - Fuera Exportar e Importar: un solo botón de imprimir. Se dejó Guías y Ayuda.
+- **Párrafos y justificado** (11/08/2026, pedido de Camilo): el Objetivo se
+  escribe largo y no había forma de separar párrafos —Enter creaba un `<div>`
+  que el saneador se comía—. Ahora `DIV` es etiqueta permitida y la prosa va
+  `text-align:justify` con `hyphens:auto` (el `lang="es"` del documento la
+  habilita). Interlineado de `.lead` a 1.62.
+- **Subtítulos excluibles** (11/08/2026, pedido de Camilo): el mismo mecanismo
+  de los capítulos, ahora por subtítulo. Ojo con `data-fin-sub`: sin eso, sacar
+  el último subtítulo del 09 se llevaba el cierre y el cuadro de firmas.
 - **Nueva + Deshacer** (11/08/2026): Camilo usó la plantilla y pidió volver al
   documento original en vez de re-editarlo todo. `Store.reiniciar()` deja lo
   anterior en `CLAVE_RESPALDO` y `Store.deshacer()` lo recupera; el respaldo se
