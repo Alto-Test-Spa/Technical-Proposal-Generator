@@ -31,6 +31,12 @@ export function parseDate(value: string): Date | null {
   return new Date(year, month - 1, day)
 }
 
+export function toDateString(d: Date): string {
+  const dd = String(d.getDate()).padStart(2, '0')
+  const mm = String(d.getMonth() + 1).padStart(2, '0')
+  return `${dd}/${mm}/${d.getFullYear()}`
+}
+
 // Vigencia (portada): "N días · hasta dd/mm/aaaa", o "N días corridos" si la fecha
 // de la propuesta no es válida todavía — mismo criterio que Vista._vigencia() del
 // vanilla, incluyendo el "—" cuando la vigencia no es un número positivo.

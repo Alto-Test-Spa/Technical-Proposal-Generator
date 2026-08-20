@@ -12,7 +12,6 @@ import Printer from 'reicon-react/icons/Printer'
 import type { TecnicaState } from '../types'
 import type { SyncState } from '../lib/api'
 import { generateCode } from '../lib/code'
-import { formatDateInput, isValidDate } from '../lib/date'
 import { resizePhoto } from '../lib/photo'
 import { Logomark } from './Logomark'
 import { HistoryMenu } from './HistoryMenu'
@@ -58,14 +57,6 @@ export function Toolbar({
     setDoc((d) => ({ ...d, code }))
   }
 
-  function setDate(raw: string) {
-    setDoc((d) => ({ ...d, date: formatDateInput(raw) }))
-  }
-
-  function setValidityDays(raw: string) {
-    setDoc((d) => ({ ...d, validityDays: Number(raw.replace(/\D/g, '')) || 0 }))
-  }
-
   async function handlePhoto(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     e.target.value = ''
@@ -77,8 +68,6 @@ export function Toolbar({
       // se ignora: la portada simplemente se queda sin foto
     }
   }
-
-  const dateInvalid = doc.date.length === 10 && !isValidDate(doc.date)
 
   return (
     <div className="toolbar no-print">
@@ -104,31 +93,6 @@ export function Toolbar({
         >
           <RefreshIcon size={14} strokeWidth={2} className="ic" />
         </button>
-      </div>
-      <div className="div" />
-      <div className="tb-group">
-        <span className="eyebrow">Fecha</span>
-        <input
-          className="tb-input w-date"
-          type="text"
-          inputMode="numeric"
-          maxLength={10}
-          placeholder="dd/mm/aaaa"
-          value={doc.date}
-          onChange={(e) => setDate(e.target.value)}
-          style={dateInvalid ? { borderColor: 'var(--color-signal)' } : undefined}
-        />
-      </div>
-      <div className="tb-group">
-        <span className="eyebrow">Vigencia</span>
-        <input
-          className="tb-input w-num"
-          type="text"
-          inputMode="numeric"
-          value={doc.validityDays}
-          onChange={(e) => setValidityDays(e.target.value)}
-        />
-        <span className="eyebrow tb-days-label">días</span>
       </div>
       <div className="div" />
       <div className="tb-group">

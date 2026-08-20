@@ -65,9 +65,10 @@ export function Chapter1({ doc, setDoc }: Props) {
           ]}
         />
         <div className="fine">
-          <EditableCell
+          <RichText
             value={f.criticalNote}
             placeholder="Nota de la matriz"
+            blockEnter
             onChange={(v) => setField('criticalNote', v)}
           />
         </div>

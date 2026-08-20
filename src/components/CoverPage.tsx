@@ -1,9 +1,10 @@
 import type { TecnicaState } from '../types'
-import { validityLabel } from '../lib/date'
+import { formatDateInput, validityLabel } from '../lib/date'
 import { veilBackground } from '../lib/photo'
 import { Icon } from './Icon'
 import { EditableCell } from './EditableCell'
 import { RichText } from './RichText'
+import { DatePicker } from './DatePicker'
 
 interface Props {
   doc: TecnicaState
@@ -94,11 +95,25 @@ export function CoverPage({ doc, setDoc }: Props) {
           </div>
           <div className="dcell">
             <p className="eyebrow">Fecha de emisión</p>
-            <div className="val mono">{doc.date || '—'}</div>
+            <DatePicker
+              className="val mono"
+              value={doc.date}
+              placeholder="dd/mm/aaaa"
+              onChange={(v) => setDoc((d) => ({ ...d, date: formatDateInput(v) }))}
+            />
           </div>
           <div className="dcell">
             <p className="eyebrow">Vigencia</p>
-            <div className="val mono">{validityLabel(doc.date, doc.validityDays)}</div>
+            <div className="validity-input val mono">
+              <input
+                className="field"
+                inputMode="numeric"
+                value={doc.validityDays}
+                onChange={(e) => setDoc((d) => ({ ...d, validityDays: Number(e.target.value.replace(/\D/g, '')) || 0 }))}
+              />
+              días
+            </div>
+            <p className="val-hint">{validityLabel(doc.date, doc.validityDays)}</p>
           </div>
           <div className="dcell">
             <p className="eyebrow">Revisión</p>

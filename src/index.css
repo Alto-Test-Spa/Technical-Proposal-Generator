@@ -721,6 +721,141 @@
     color: var(--color-paper);
     min-height: 18px;
   }
+  .val-hint {
+    font-size: 10px;
+    color: var(--color-steel-light);
+    margin-top: 3px;
+  }
+
+  /* ═════════════════ Fecha/vigencia editables (ficha de portada) ═════════════════
+     Antes vivían en la barra de arriba; se movieron acá para no competir con el
+     Historial por espacio (ver "Bugs cazados" en CLAUDE.md). El datepicker es el
+     mismo componente de propuesta_economica_react, reestilado para el fondo oscuro
+     de esta portada en vez del fondo claro de esa ficha de cliente. */
+  input.field {
+    width: 100%;
+    display: block;
+    border: 0;
+    background: transparent;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--color-paper);
+    padding: 0;
+    outline: none;
+    line-height: 1.4;
+  }
+  input.field::placeholder {
+    color: var(--color-steel-light);
+  }
+  .datepicker {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .datepicker > input.field {
+    flex: 1;
+    min-width: 0;
+  }
+  .datepicker-toggle {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    color: var(--color-steel-light);
+    cursor: pointer;
+  }
+  .datepicker-toggle:hover {
+    color: var(--color-signal);
+  }
+  .datepicker-pop {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 70;
+    width: 216px;
+    padding: 10px;
+    background: var(--color-paper);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    box-shadow: 0 18px 40px -12px rgb(16 21 30 / 45%);
+  }
+  .datepicker-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .datepicker-head button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: transparent;
+    border: 0;
+    color: var(--color-steel);
+    cursor: pointer;
+  }
+  .datepicker-head button:hover {
+    color: var(--color-signal);
+  }
+  .datepicker-month {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+  .datepicker-weekdays,
+  .datepicker-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+  .datepicker-weekdays span {
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--color-steel-light);
+    padding-bottom: 4px;
+  }
+  .datepicker-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    border-radius: 2px;
+    font-size: 11px;
+    color: var(--color-ink);
+    cursor: pointer;
+  }
+  .datepicker-day:hover {
+    background: rgb(16 21 30 / 8%);
+  }
+  .datepicker-day.is-today {
+    color: var(--color-signal);
+    font-weight: 600;
+  }
+  .datepicker-day.is-selected {
+    background: var(--color-signal);
+    color: var(--color-paper);
+  }
+  .validity-input {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+  }
+  .validity-input input.field {
+    width: 34px;
+    flex: 0 0 auto;
+  }
   .pilares {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
