@@ -145,8 +145,6 @@ export interface TecnicaState {
   coverPhoto: string
   coverVeil: number
 
-  showGuides: boolean
-
   fields: Fields
 
   // ids de capítulos ("s3") o subtítulos ("s8.exclusiones") dejados fuera —

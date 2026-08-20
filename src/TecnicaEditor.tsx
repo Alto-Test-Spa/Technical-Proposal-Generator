@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTecnicaStore } from './lib/store'
+import { useGuidesPreference } from './lib/useGuides'
 import { toggleExcluded } from './lib/chapters'
 import { Toolbar } from './components/Toolbar'
 import { ChaptersPanelWrapper } from './components/ChaptersPanelWrapper'
@@ -24,10 +25,11 @@ export default function TecnicaEditor({ onAuthExpired }: Props) {
   const { doc, setDoc, reset, undo, canUndo, loadReport, syncState, booting } = useTecnicaStore(onAuthExpired)
   const [showChapters, setShowChapters] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
+  const [showGuides, setShowGuides] = useGuidesPreference()
 
   useEffect(() => {
-    document.body.classList.toggle('guias', doc.showGuides)
-  }, [doc.showGuides])
+    document.body.classList.toggle('guias', showGuides)
+  }, [showGuides])
 
   useEffect(() => {
     document.title = doc.code ? `${doc.code} — Propuesta Técnica Alto Test` : 'ALTO TEST — Propuesta Técnica de Servicio'
@@ -53,6 +55,8 @@ export default function TecnicaEditor({ onAuthExpired }: Props) {
         onToggleChapters={() => setShowChapters((v) => !v)}
         showHelp={showHelp}
         onToggleHelp={() => setShowHelp((v) => !v)}
+        showGuides={showGuides}
+        onToggleGuides={() => setShowGuides(!showGuides)}
       />
 
       {showChapters && <ChaptersPanelWrapper excluded={doc.excluded} onToggle={toggleChapter} />}

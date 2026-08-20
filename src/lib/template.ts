@@ -12,8 +12,6 @@ export function initialTemplate(): TecnicaState {
     coverPhoto: '',
     coverVeil: 72,
 
-    showGuides: true,
-
     fields: {
       cover: {
         eyebrow: 'Diagnóstico · Ingeniería · Instalación · Certificación',

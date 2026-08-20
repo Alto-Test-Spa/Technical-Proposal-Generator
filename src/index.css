@@ -316,7 +316,13 @@
     display: none;
   }
 
-  /* ═════════════════ Estado de sincronización ═════════════════ */
+  /* ═════════════════ Estado de sincronización ═════════════════
+     Ancho fijo, reservado siempre (incluso en 'idle', que no dibuja nada):
+     el texto va de "Guardando…" a "Guardado en la nube" a "Sin conexión —
+     cambios no guardados" — sin un ancho estable, cada cambio de estado corre
+     los botones de la derecha (Guías, Capítulos…) y, si la barra ya estaba al
+     límite de envolver a una segunda fila, la hace "saltar" de alto en cada
+     guardado — eso es lo que se sentía como que la página se refrescaba. */
   .sync-status {
     display: flex;
     align-items: center;
@@ -326,6 +332,7 @@
     letter-spacing: 0.04em;
     padding: 0 4px;
     white-space: nowrap;
+    min-width: 190px;
   }
   .sync-status--saving,
   .sync-status--saved {

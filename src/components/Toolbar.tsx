@@ -30,6 +30,8 @@ interface Props {
   onToggleChapters: () => void
   showHelp: boolean
   onToggleHelp: () => void
+  showGuides: boolean
+  onToggleGuides: () => void
 }
 
 export function Toolbar({
@@ -44,6 +46,8 @@ export function Toolbar({
   onToggleChapters,
   showHelp,
   onToggleHelp,
+  showGuides,
+  onToggleGuides,
 }: Props) {
   const fileRef = useRef<HTMLInputElement>(null)
   const [confirmingNew, setConfirmingNew] = useState(false)
@@ -128,8 +132,8 @@ export function Toolbar({
 
       <button
         type="button"
-        className={`tb-btn ghost ${doc.showGuides ? 'on' : ''}`}
-        onClick={() => setDoc((d) => ({ ...d, showGuides: !d.showGuides }))}
+        className={`tb-btn ghost ${showGuides ? 'on' : ''}`}
+        onClick={onToggleGuides}
         title="Mostrar u ocultar el subrayado de los campos editables"
       >
         <Edit2 size={14} strokeWidth={2} className="ic" />

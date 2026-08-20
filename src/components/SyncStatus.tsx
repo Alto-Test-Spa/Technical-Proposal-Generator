@@ -19,7 +19,10 @@ const CONFIG: Partial<Record<SyncState, Config>> = {
 
 export function SyncStatus({ state }: { state: SyncState }) {
   const cfg = CONFIG[state]
-  if (!cfg) return null
+  // Ocupa el espacio siempre, aunque no haya nada que mostrar todavía (estado
+  // 'idle', sólo al arrancar) — así ese primer guardado no corre los botones
+  // de al lado al aparecer de la nada.
+  if (!cfg) return <div className="sync-status no-print" />
   const Icon = cfg.icon
   return (
     <div className={`sync-status ${cfg.className} no-print`} title={cfg.label}>
