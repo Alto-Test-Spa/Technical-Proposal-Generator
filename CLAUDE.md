@@ -141,6 +141,13 @@ nombre inválido es un `import` roto, error de compilación, no un fallo mudo.
 | Warning de React: `<p>` no puede contener `<div>` | Varios `<p className="eyebrow">`/`<p className="fine">` envolvían un `EditableCell` (que siempre renderiza `<div>`) — se cambiaron esos wrappers a `<div>` (el CSS es por clase, no por selector de etiqueta, así que no afecta el diseño) |
 | Capítulo 05 (Gantt + 2 tablas) al borde de desbordar una hoja carta | El preflight de Tailwind fija `line-height:1.5` en `html`; el vanilla nunca tocaba `line-height` (quedaba en el `normal` del navegador). Se neutralizó con `body{line-height:normal}` en `index.css` — cualquier clase que ya declare su propio `line-height` (`.lead`, `.dek`, `.fine`, `td`…) lo sigue mandando igual |
 | Filas de tabla ~1px más altas que el vanilla | `EditableTable` envolvía cada celda en `<td><div className="editable">` — el vanilla hace contenteditable al `<td>` mismo. Se separó en `EditableTableCell.tsx`, que hace contenteditable directo al `<td>`, sin div de por medio |
+| Historial se abría fuera de pantalla, a la izquierda | La barra tenía demasiados controles (código, fecha, vigencia, portada, guías…) y envolvía a una segunda fila en viewports normales — el botón "Historial" caía a la izquierda pero el dropdown seguía anclado con `right:0` como si estuviera a la derecha. Se sacaron fecha y vigencia de la barra (pasaron a inputs editables en la propia ficha de portada, con datepicker propio para la fecha, igual que `propuesta_economica_react`) |
+| Pantalla se oscurecía de golpe al hacer clic en "Nueva" | Era `window.confirm()` nativo del navegador — sin estilo propio, rompía el lenguaje visual del resto de la app. Reemplazado por `ConfirmDialog.tsx`, con la piel oscura/paper del documento |
+| Nota de criticidad del capítulo 1 mostraba literalmente `<b>...</b>` como texto | El campo traía negrita en su contenido de fábrica pero se renderizaba con `EditableCell` (texto plano, `textContent`) en vez de `RichText` |
+| La barra "saltaba" de alto cada vez que guardaba | `.sync-status` no tenía ancho reservado — "Guardando…" vs "Guardado en la nube" tienen largos distintos, y el cambio corría los botones de la derecha; con la barra ya al límite de envolver, eso la hacía crecer/achicar de alto en cada guardado. Se le dio `min-width` fijo y `SyncStatus` ahora ocupa el espacio incluso en estado `idle` |
+| Cada clic en "Guías" disparaba un guardado completo a la nube | `showGuides` vivía dentro de `TecnicaState` (el documento que se sincroniza entero). En el vanilla era una preferencia puramente local (sólo `localStorage`, sin red). Se movió a `useGuidesPreference()` (`lib/useGuides.ts`), local a este navegador — nunca pasa por el Worker |
+| Abrir la app sin editar nada ya creaba un documento permanente en la nube | `doc` nace de `initialTemplate()` en el primer render, y el guardado automático se disparaba con cualquier cambio de `doc` — sin proteger ese primer render, cada apertura (o cada test) creaba un documento "fantasma". Se compara `doc` contra una foto de sí mismo del primer render (por referencia, no un flag de una sola consumición — un flag booleano falla bajo React StrictMode, que monta cada efecto dos veces en desarrollo). Mismo fix aplicado en `informe_levantamiento` y `propuesta_economica_react` el mismo día |
+| Pestaña del navegador mostraba sólo el folio (`PT-2026...`), sin marca | El título ponía el código primero (`${code} — Propuesta Técnica Alto Test`); una pestaña truncada no mostraba nada reconocible. Se invirtió el orden: marca primero, folio al final (sigue en el título completo para que "Guardar como PDF" lo siga proponiendo como nombre de archivo) |
 
 **Verificación hecha:** con el `.dev.vars` local del Worker compartido
 (`ACCESS_KEY=7166` en `informes/informe_levantamiento/worker/`, KV simulado
@@ -160,23 +167,35 @@ por la misma herramienta — la comparación válida es contra el vanilla vía
 Playwright, no contra el PDF de ejemplo, para no perseguir una diferencia que
 es del método de comparación y no del contenido.
 
-## Despliegue
+## Despliegue (ya hecho, 2026-08-20)
 
-**Pendiente.** `propuesta_tecnica` ya tiene un proyecto en Vercel sirviendo el
-vanilla actual (cuenta personal de Matías) — no hay que crear hosting nuevo.
-Falta: `git init` acá, push a una rama (`react-rewrite`) del repo existente
-`Alto-Test-Spa/Technical-Proposal-Generator`, cambiar el Framework Preset del
-proyecto Vercel a Vite, configurar `VITE_REPORTS_ENDPOINT`, verificar el
-preview, promover a producción, y mergear sobre `main` con
-`--allow-unrelated-histories -X theirs` (mismo procedimiento que
-`propuesta_economica_react`, ver su CLAUDE.md sección "Despliegue") — con
-confirmación explícita del usuario antes del push a `main`.
+Mismo procedimiento que `propuesta_economica_react` (ver su `CLAUDE.md`,
+sección "Despliegue") — reemplazó al vanilla en el mismo proyecto de Vercel
+que ya tenía `propuesta_tecnica` (cuenta personal de Matías), no se creó
+hosting nuevo:
+
+1. `git init` acá, push como rama `react-rewrite` al repo existente
+   `Alto-Test-Spa/Technical-Proposal-Generator`.
+2. En el proyecto Vercel ya existente: Framework Preset cambiado de
+   estático a Vite, variable de entorno `VITE_REPORTS_ENDPOINT` agregada.
+3. Verificado el preview, promovido a producción manualmente desde el
+   dashboard de Vercel.
+4. `git checkout -b main origin/main` local (arranca en el vanilla, que es
+   lo que tenía `origin/main`), merge de `react-rewrite` con
+   `--allow-unrelated-histories -X theirs`, push a `main` — con
+   confirmación explícita del usuario antes del push, igual que la vez
+   anterior. El merge dejó sueltos `assets/*` y `README.md` del vanilla (no
+   chocaban con nada del árbol React, así que `-X theirs` no los tocó) — se
+   sacaron en un commit aparte inmediatamente después.
+5. Confirmado por el usuario que el deploy de producción sirve el
+   contenido nuevo.
+6. **La carpeta local del vanilla (`venta/propuesta_tecnica`) se borró**
+   una vez confirmado el punto anterior — su historial completo sigue en
+   GitHub como el otro padre del commit de merge (`git log --all` /
+   `git show <hash>:archivo` desde acá).
 
 ## Pendientes
 
-- Desplegar (ver arriba).
-- Actualizar `CONTEXTO.md` de la raíz y `CLAUDE.md` de `propuesta_tecnica`
-  (vanilla) e `informe_levantamiento` una vez desplegado — los tres siguen
-  hablando de esto como pendiente.
 - Migrar cualquier propuesta que Camilo tuviera guardada sólo en el
-  `localStorage` del vanilla (no hay forma automática, vivía fuera del Worker).
+  `localStorage` del vanilla (no hay forma automática, vivía fuera del
+  Worker, y la carpeta que la hubiera tenido en pantalla ya no existe).
