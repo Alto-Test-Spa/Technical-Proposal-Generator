@@ -32,7 +32,11 @@ export default function TecnicaEditor({ onAuthExpired }: Props) {
   }, [showGuides])
 
   useEffect(() => {
-    document.title = doc.code ? `${doc.code} — Propuesta Técnica Alto Test` : 'ALTO TEST — Propuesta Técnica de Servicio'
+    // El folio va al final, no adelante: en la pestaña del navegador (que
+    // trunca el título) se veía sólo el código ("PT-20260820-..."), sin
+    // ninguna pista de qué documento es. El folio sigue en el título completo
+    // para que "Guardar como PDF" lo siga proponiendo como nombre de archivo.
+    document.title = doc.code ? `ALTO TEST — Propuesta Técnica · ${doc.code}` : 'ALTO TEST — Propuesta Técnica'
   }, [doc.code])
 
   if (booting) return <div className="boot-screen">Cargando…</div>
