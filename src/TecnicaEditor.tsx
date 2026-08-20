@@ -31,12 +31,27 @@ export default function TecnicaEditor({ onAuthExpired }: Props) {
     document.body.classList.toggle('guias', showGuides)
   }, [showGuides])
 
+  // Título de pestaña siempre limpio, sin folio — pero justo antes de
+  // imprimir (el botón de la barra o Ctrl+P, `beforeprint` cubre los dos) se
+  // cambia al folio, que es lo que el navegador propone como nombre de
+  // archivo al "Guardar como PDF". `afterprint` lo devuelve a la normalidad.
   useEffect(() => {
-    // El folio va al final, no adelante: en la pestaña del navegador (que
-    // trunca el título) se veía sólo el código ("PT-20260820-..."), sin
-    // ninguna pista de qué documento es. El folio sigue en el título completo
-    // para que "Guardar como PDF" lo siga proponiendo como nombre de archivo.
-    document.title = doc.code ? `ALTO TEST — Propuesta Técnica · ${doc.code}` : 'ALTO TEST — Propuesta Técnica'
+    document.title = 'ALTO TEST — Propuesta Técnica'
+  }, [])
+
+  useEffect(() => {
+    function onBeforePrint() {
+      if (doc.code) document.title = doc.code
+    }
+    function onAfterPrint() {
+      document.title = 'ALTO TEST — Propuesta Técnica'
+    }
+    window.addEventListener('beforeprint', onBeforePrint)
+    window.addEventListener('afterprint', onAfterPrint)
+    return () => {
+      window.removeEventListener('beforeprint', onBeforePrint)
+      window.removeEventListener('afterprint', onAfterPrint)
+    }
   }, [doc.code])
 
   if (booting) return <div className="boot-screen">Cargando…</div>
