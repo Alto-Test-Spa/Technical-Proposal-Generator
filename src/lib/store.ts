@@ -45,6 +45,19 @@ export function useTecnicaStore(onAuthExpired: () => void) {
   const [booting, setBooting] = useState(() => !!readMirror())
   const firstChangeAfterReset = useRef(false)
   const saveSeq = useRef(0)
+  // Si la sesión arranca sin mirror local, `doc` nace de initialTemplate() —
+  // una propuesta en blanco que nadie tocó. Sin esta guarda, el solo hecho de
+  // abrir la app (o que la abra un bot, o correr un test) crea un documento
+  // permanente en el Worker. Se compara contra una foto del `doc` del primer
+  // render (no un flag que se consume una vez): StrictMode en desarrollo
+  // monta cada efecto dos veces (monta → limpia → monta) y un flag booleano
+  // se "gasta" en la primera pasada fantasma, dejando la segunda (la real)
+  // sin protección. Comparando por valor da lo mismo cuántas veces se
+  // invoque el efecto — sigue sin guardar mientras `doc` sea idéntico al
+  // original, y dejar de serlo (una edición real) es permanente para el
+  // resto de la sesión.
+  const hadMirrorOnBoot = useRef(!!readMirror())
+  const pristineDoc = useRef(doc)
   const onAuthExpiredRef = useRef(onAuthExpired)
   useEffect(() => {
     onAuthExpiredRef.current = onAuthExpired
@@ -70,6 +83,8 @@ export function useTecnicaStore(onAuthExpired: () => void) {
   }, [])
 
   useEffect(() => {
+    const isUntouched = !hadMirrorOnBoot.current && doc === pristineDoc.current
+    if (isUntouched) return
     const seq = ++saveSeq.current
     const t = setTimeout(async () => {
       writeMirror(doc)
