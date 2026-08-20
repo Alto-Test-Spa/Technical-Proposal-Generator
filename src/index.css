@@ -540,6 +540,44 @@
     margin: 0;
   }
 
+  /* ═════════════════ Diálogo de confirmación ═════════════════
+     Reemplaza window.confirm() — ver ConfirmDialog.tsx. */
+  .confirm-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: rgb(16 21 30 / 55%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .confirm-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    padding: 22px 24px;
+    border-radius: 2px;
+    box-shadow: 0 24px 60px -16px rgb(16 21 30 / 70%);
+  }
+  .confirm-title {
+    margin: 0 0 10px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .confirm-message {
+    margin: 0 0 20px;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--color-steel-light);
+  }
+  .confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
   /* ═════════════════ Hoja y paginación ═════════════════ */
   .sheet {
     width: 100%;

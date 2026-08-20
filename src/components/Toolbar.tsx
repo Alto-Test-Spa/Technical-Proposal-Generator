@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import RefreshIcon from 'reicon-react/icons/Refresh'
 import ImageIcon from 'reicon-react/icons/Image'
@@ -16,6 +16,7 @@ import { resizePhoto } from '../lib/photo'
 import { Logomark } from './Logomark'
 import { HistoryMenu } from './HistoryMenu'
 import { SyncStatus } from './SyncStatus'
+import { ConfirmDialog } from './ConfirmDialog'
 
 interface Props {
   doc: TecnicaState
@@ -45,12 +46,11 @@ export function Toolbar({
   onToggleHelp,
 }: Props) {
   const fileRef = useRef<HTMLInputElement>(null)
+  const [confirmingNew, setConfirmingNew] = useState(false)
 
-  function handleNew() {
-    const ok = window.confirm(
-      '¿Empezar una propuesta nueva?\n\nEl documento vuelve a su contenido original y recibe un número y una fecha nuevos. Se pierde todo lo que escribió en esta propuesta.\n\nSi se arrepiente, el botón Deshacer la recupera mientras no escriba nada.',
-    )
-    if (ok) onNew()
+  function confirmNew() {
+    setConfirmingNew(false)
+    onNew()
   }
 
   function setCode(code: string) {
@@ -154,7 +154,12 @@ export function Toolbar({
         Ayuda
       </button>
       <HistoryMenu currentCode={doc.code} onOpen={onLoadReport} />
-      <button type="button" className="tb-btn ghost" onClick={handleNew} title="Volver al documento original y empezar una propuesta nueva">
+      <button
+        type="button"
+        className="tb-btn ghost"
+        onClick={() => setConfirmingNew(true)}
+        title="Volver al documento original y empezar una propuesta nueva"
+      >
         <FilePlus size={14} strokeWidth={2} className="ic" />
         Nueva
       </button>
@@ -168,6 +173,16 @@ export function Toolbar({
         <Printer size={14} strokeWidth={2} className="ic" />
         Imprimir / PDF
       </button>
+
+      {confirmingNew && (
+        <ConfirmDialog
+          title="¿Empezar una propuesta nueva?"
+          message="El documento vuelve a su contenido original y recibe un número y una fecha nuevos. Se pierde todo lo que escribió en esta propuesta. Si se arrepiente, el botón Deshacer la recupera mientras no escriba nada."
+          confirmLabel="Empezar de nuevo"
+          onConfirm={confirmNew}
+          onCancel={() => setConfirmingNew(false)}
+        />
+      )}
     </div>
   )
 }
